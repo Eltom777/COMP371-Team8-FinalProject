@@ -14,7 +14,7 @@ Camera::Camera(GLFWwindow* window)
 	
 	this->pan = -90.0f;
 	this->tilt = -9.48f;
-	this->fov = 45.0f;
+	this->fov = 80.0f;
 
 	this->lastX = 512.0f;
 	this->lastY = 384.0f;
@@ -95,7 +95,7 @@ void Camera::handleKeyboardInputs()
 		this->cameraPos.z = (sin(glm::radians(this->xzPosition))) * cos(glm::radians(this->yzPosition)) * this->distanceFromWorldOrigin;
 	}
 
-	else if (glfwGetKey(this->window, GLFW_KEY_UP) == GLFW_PRESS)
+	else if (glfwGetKey(this->window, GLFW_KEY_DOWN) == GLFW_PRESS)
 	{
 		this->cameraDirection = glm::vec3(0.0f, 0.0f, .0f);
 		// rotate up
@@ -127,7 +127,7 @@ void Camera::handleKeyboardInputs()
 		this->cameraPos.z = (sin(glm::radians(this->xzPosition))) * cos(glm::radians(this->yzPosition)) * this->distanceFromWorldOrigin;
 	}
 
-	else if (glfwGetKey(this->window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	else if (glfwGetKey(this->window, GLFW_KEY_UP) == GLFW_PRESS)
 	{
 		this->cameraDirection = glm::vec3(0.0f, 0.0f, .0f);
 		// rotate down
@@ -168,7 +168,7 @@ void Camera::handleKeyboardInputs()
 
 		this->pan = -90.0f;
 		this->tilt = -9.48f;
-		this->fov = 45.0f;
+		this->fov = 100.0f;
 
 		this->lastX = 512.0f;
 		this->lastY = 384.0f;

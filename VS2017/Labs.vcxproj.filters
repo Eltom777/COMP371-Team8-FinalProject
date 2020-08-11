@@ -122,5 +122,8 @@
     <ClInclude Include="Objects\Rubik.h">
       <Filter>Objects</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\drawtext.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

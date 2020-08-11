@@ -14,7 +14,7 @@
     <ProjectGuid>{277EAE68-9EED-4EFF-BAD3-2A70787A3E8D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Labs</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
     <ProjectName>COMP371-Assignment1</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -22,7 +22,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -61,7 +61,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../ThirdParty/glew-2.1.0/include;../ThirdParty/FreeImage-3170/Source;../ThirdParty/glfw-3.3/include;../ThirdParty/glm;../VS2017;../VS2017/Shaders;../VS2017/Objects;../VS2017/Objects/Letters;../VS2017/Objects/Numbers;../VS2017/Objects/Students;../VS2017/ThirdParty/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../ThirdParty/glew-2.1.0/include;../ThirdParty/FreeImage-3170/Source;../ThirdParty/glfw-3.3/include;../ThirdParty/glm;../VS2017;../VS2017/Shaders;../VS2017/Objects;../VS2017/Objects/Letters;../VS2017/Objects/Numbers;../VS2017/Objects/Students;../VS2017/ThirdParty/;../VS2017/ThirdParty/drawtext.h</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,6 +128,7 @@
     <ClCompile Include="Objects\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Source\drawtext.h" />
     <ClInclude Include="..\Source\OBJloader.h" />
     <ClInclude Include="..\Source\OBJloaderV2.h" />
     <ClInclude Include="..\Source\stb_image.h" />
