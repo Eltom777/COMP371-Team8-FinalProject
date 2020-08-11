@@ -1,0 +1,14 @@
+#OpenGl libs
+/ThirdParty
+
+#build
+/Bin
+/Build
+/Build
+/VS2017/.vs
+/VS2017/.vs/COMP371-Assignment1/v16/.suo
+/VS2017/.vs/COMP371-Assignment1/v16/Browse.VC.db
+/VS2017/.vs/COMP371-Assignment1/v16/ipch/AutoPCH/71f22f49bf485a33/MAIN.ipch
+/VS2017/Labs.log
+/.vs/COMP371-Assignment1/v15/.suo
+/.vs/COMP371-Assignment1/v15/Browse.VC.db
