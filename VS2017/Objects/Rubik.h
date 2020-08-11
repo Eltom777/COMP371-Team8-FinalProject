@@ -1,7 +1,7 @@
 #pragma once
 #include "Cubie.h"
 
-//dimesion of cube
+//dimension of cube
 const int DIM = 3;
 
 //offset between cubies
@@ -13,18 +13,22 @@ public:
 	Rubik();
 	~Rubik();
 	void setup();
+	void translateX(int k);
+	void translateY(int k);
+	void translateZ(int k);
 	mat4 getModelMatrix();
 	void draw(Shader* shaderProgram, const bool isTexture);
-	void updateModelMatrix();
+	/*void updateModelMatrix();
 	void translateModel(mat4 t);
 	void translateModelTop(mat4 t);
 	void scaleModel(mat4 s);
-	void rotateModel(mat4 r, GLuint modelMatrixLocation);
+	void rotateModel(mat4 r, GLuint modelMatrixLocation);*/
 	//void draw(GLuint modelMatrixLocation);
 
 	void create();
 
 	Cubie cubies [DIM][DIM][DIM];
+	Cubie baseTest;
 	GLuint textureId;
 	GLuint cubeVAO;
 protected:
