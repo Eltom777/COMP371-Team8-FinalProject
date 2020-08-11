@@ -23,9 +23,9 @@ Rubik::Rubik() {
 
 void Rubik::setup() {
 
-	float xlength = 0.33;
-	float ylength = 0.33;
-	float zlength = 0.33;
+	float xlength = 0.68;
+	float ylength = 0.68;
+	float zlength = 0.68;
 
 	float shift = 0.33 + offset;
 
@@ -36,10 +36,10 @@ void Rubik::setup() {
 				cubies[i][j][k].setTranslation(vec3(xlength, ylength, zlength));
 				xlength -= (shift);
 			}
-			xlength = 0.33;
+			xlength = 0.68;
 			ylength -= (shift);
 		}
-		ylength = 0.33;
+		ylength = 0.68;
 		zlength -= (shift);
 	}
 
