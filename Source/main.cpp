@@ -35,6 +35,14 @@ static int currentModel = -1;
 bool isTexture = false;
 bool isLighting = true;
 
+//animation 
+int command = -1;
+float angle = 0.0f;
+float dt;
+float PI = 3.141593;
+float time;
+float last = 0.0f;
+
 // Forward declaration of camera and shader program
 Camera* camera_ptr;
 int width = 1024;
@@ -57,6 +65,9 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xOffset, double yOffset);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+
+//Function for operation and animation
+void operation();
 
 //Rubik's Cube
 Rubik* rubik = new Rubik();
@@ -165,7 +176,7 @@ int main(int argc, char* argv[])
 	//Load Texture and VAO for Models
 	rubik->create();
 
-	double time = glfwGetTime();
+	//double time = glfwGetTime();
 	// Entering Main Loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -179,7 +190,10 @@ int main(int argc, char* argv[])
 		glfwGetWindowSize(window, &width, &height); // if window is resized, get new size to draw perspective view correctly
 		setUpProjection(shaderProgram, camera_ptr);
 		//setUpProjection(shaderPrograms[1], camera_ptr);
-
+		
+		time = glfwGetTime();
+		dt = time - last;
+		last = time;
 
 		// Draw Rubik's Cube models
 		rubik->draw(shaderProgram, isTexture);
@@ -211,7 +225,13 @@ int main(int argc, char* argv[])
 		glfwSwapBuffers(window);
 
 		// Detect inputs
-		glfwPollEvents();
+		if (command == -1) {
+			glfwPollEvents();
+		}
+		else {
+			operation();
+		}
+		
 
 		// Handle inputs
 		camera_ptr->handleKeyboardInputs();
@@ -272,15 +292,18 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	//handle x
 	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
 	{
-		rubik->translateX(0);
+		//rubik->translateX(0);
+		command = 1;
 	}
 	if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
 	{
-		rubik->translateX(1);
+		//rubik->translateX(1);
+		command = 2;
 	}
 	if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
 	{
-		rubik->translateX(2);
+		//rubik->translateX(2);
+		command = 3;
 	}
 
 	//handle y
@@ -311,4 +334,24 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		rubik->translateZ(2);
 	}
 
+}
+
+void operation() {
+	if (angle <= glm::radians(90.0f)) {
+		//angle should be controlled to land at 90.0f, right now its continously increased until it reaches 90.0f
+		angle = (angle + PI/16 * dt);
+		if (command == 1) {
+			rubik->translateX(0, angle);
+		}
+		if (command == 2) {
+			rubik->translateX(1, angle);
+		}
+		if (command == 3) {
+			rubik->translateX(2, angle);
+		}
+	}
+	else {
+		command = -1;
+		angle = 0.0f;
+	}
 }
