@@ -46,9 +46,9 @@ void Rubik::setup() {
 	baseTest = cubies[1][1][0];
 }
 
-void Rubik::translateX(int k)
+void Rubik::translateX(int k, float angle)
 {
-	glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(2.0f), glm::vec3(0.0f, 0.0f, 0.1f)); //glm::radians(90.0f)
+	glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0.0f, 0.0f, 0.1f)); //glm::radians(90.0f)
 	
 	modelMatrix = t * modelMatrix;
 
@@ -182,6 +182,82 @@ void Rubik::draw(Shader* shaderProgram, const bool isTexture) {
 void Rubik::create() {
 	cubeVAO = cubies[0][0][0].createCubieVAO();
 	//textureId = loadTexture(filename); -> for texture
+}
+
+/*
+	All transfer functions have not been tested
+	should be executed once the animation is complete 
+*/
+void Rubik::transferX(int k) {
+	Cubie temp = cubies[k][0][1];
+	Cubie temp2 = cubies[k][0][2];
+
+	//swap all the cubies to their new indices (CCW)
+	cubies[k][0][1] = cubies[k][0][0];
+	cubies[k][0][2] = temp;
+
+	temp = cubies[k][1][2];
+	cubies[k][1][2] = temp2;
+
+	temp2 = cubies[k][2][2];
+	cubies[k][2][2] = temp;
+
+	temp = cubies[k][2][1];
+	cubies[k][2][1] = temp2;
+
+	temp2 = cubies[k][2][0];
+	cubies[k][2][0] = temp;
+
+	cubies[k][0][0] = cubies[k][1][0];
+	cubies[k][1][0] = temp2;
+}
+
+void Rubik::transferY(int k) {
+	Cubie temp = cubies[2][k][1];
+	Cubie temp2 = cubies[2][k][2];
+
+	//swap all the cubies to their new indices (CCW)
+	cubies[2][k][1] = cubies[2][k][0];
+	cubies[2][k][2] = temp;
+
+	temp = cubies[1][k][2];
+	cubies[1][k][2] = temp2;
+
+	temp2 = cubies[0][k][2];
+	cubies[0][k][2] = temp;
+
+	temp = cubies[0][k][1];
+	cubies[0][k][1] = temp2;
+
+	temp2 = cubies[0][k][0];
+	cubies[0][k][0] = temp;
+
+	cubies[2][k][0] = cubies[1][k][0];
+	cubies[1][k][0] = temp2;
+}
+
+void Rubik::transferZ(int k) {
+	Cubie temp = cubies[1][0][k];
+	Cubie temp2 = cubies[0][0][k];
+
+	//swap all the cubies to their new indices (CCW)
+	cubies[1][0][k] = cubies[2][0][k];
+	cubies[0][0][k] = temp;
+
+	temp = cubies[0][1][k];
+	cubies[0][1][k] = temp2;
+
+	temp2 = cubies[0][2][k];
+	cubies[0][2][k] = temp;
+
+	temp = cubies[1][2][k];
+	cubies[1][2][k] = temp2;
+
+	temp2 = cubies[2][2][k];
+	cubies[2][2][k] = temp;
+
+	cubies[k][0][0] = cubies[2][1][k];
+	cubies[2][0][k] = temp2;
 }
 
 
