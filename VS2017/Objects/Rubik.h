@@ -1,5 +1,6 @@
 #pragma once
 #include "Cubie.h"
+#include <Object.h>
 
 //dimension of cube
 const int DIM = 3;
@@ -7,7 +8,7 @@ const int DIM = 3;
 //offset between cubies
 const float offset = 0.35;
 
-class Rubik
+class Rubik : Object
 {
 public:
 	Rubik();
