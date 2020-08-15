@@ -74,7 +74,6 @@ Cubie::Cubie()
 	cubeChild = NULL;
 	//sibling = NULL;
 	filename = "../Assets/Textures/tch.png";
-}
 
 Cubie::~Cubie() {
 
