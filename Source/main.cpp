@@ -169,6 +169,7 @@ int main(int argc, char* argv[])
 	// Entering Main Loop
 	while (!glfwWindowShouldClose(window))
 	{
+
 		// Enable z-buffer
 		glEnable(GL_DEPTH_TEST);
 
