@@ -36,7 +36,6 @@ public:
 
 	GLuint textureId;
 	GLuint cubieVAO;
-
 private:
 	static const TexturedColoredVertex vertices[];
 	mat4 modelMatrix;
@@ -44,6 +43,7 @@ private:
 	mat4 translationMatrix;
 	mat4 scalingMatrix;
 	float scalingFactor = 1.0f / 3.0f;
+	
 	char* filename; // texture location
 };
 

@@ -161,7 +161,13 @@ void Cubie::draw(vector<GLuint> textures)
 	glDrawArraysInstanced(GL_TRIANGLES, first[5], count[5], 1);
 }
 
+void Cubie::create() {
+	cubieVAO = createCubieVAO();
+	textureId = loadTexture(filename);
+}
+
 int Cubie::createCubieVAO() {
+	textureId = loadTexture(filename);
 	GLuint vao;
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);

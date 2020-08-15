@@ -119,6 +119,10 @@ void Rubik::draw(Shader* shaderProgram, const bool isTexture) {
 	}
 }
 
+void Rubik::create() {
+	cubeVAO = cubies[0][0][0].createCubieVAO();
+	textureId = loadTexture(filename); // -> for texture
+}
 
 void Rubik::transferX(int k) {
 
