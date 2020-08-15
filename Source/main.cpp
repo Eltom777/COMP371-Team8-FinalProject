@@ -35,6 +35,15 @@ static int currentModel = -1;
 bool isTexture = false;
 bool isLighting = true;
 
+//animation 
+int command = -1;
+float angle = 0.0f;
+float angularSpeed = 180.0f;
+float dt;
+float PI = 3.141593;
+float time;
+float last = 0.0f;
+
 // Forward declaration of camera and shader program
 Camera* camera_ptr;
 int width = 1024;
@@ -57,6 +66,9 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xOffset, double yOffset);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+
+//Function for operation and animation
+void operation();
 
 //Rubik's Cube
 Rubik* rubik = new Rubik();
@@ -165,7 +177,7 @@ int main(int argc, char* argv[])
 	//Load Texture and VAO for Models
 	rubik->create();
 
-	double time = glfwGetTime();
+	//double time = glfwGetTime();
 	// Entering Main Loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -179,7 +191,10 @@ int main(int argc, char* argv[])
 		glfwGetWindowSize(window, &width, &height); // if window is resized, get new size to draw perspective view correctly
 		setUpProjection(shaderProgram, camera_ptr);
 		//setUpProjection(shaderPrograms[1], camera_ptr);
-
+		
+		time = glfwGetTime();
+		dt = time - last;
+		last = time;
 
 		// Draw Rubik's Cube models
 		rubik->draw(shaderProgram, isTexture);
@@ -211,7 +226,13 @@ int main(int argc, char* argv[])
 		glfwSwapBuffers(window);
 
 		// Detect inputs
-		glfwPollEvents();
+		if (command == -1) {
+			glfwPollEvents();
+		}
+		else {
+			operation();
+		}
+		
 
 		// Handle inputs
 		camera_ptr->handleKeyboardInputs();
@@ -266,49 +287,144 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		}
 	}
 
+	// Reset button
+	if (key == GLFW_KEY_R && action == GLFW_PRESS)
+	{
+		rubik->~Rubik();
+		rubik = new Rubik();
+	}
+
 	//DOESN'T WORK BECAUSE IF YOU MOVE X, THEN THE POSITIONS ARE MESSED UP WHEN MOVING Y OR Z
 	//MAYBE MAKE AN ARRAY OR A LINKED LIST THAT'S UPDATED EVERYTIME YOU DO A MOVE
 	//AND WHEN YOU PRESS 1, INSTEAD OF GOING THROUGH A NESTED LOOP, IT GOES THROUGH THE ARRAY
 	//handle x
 	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
 	{
-		rubik->translateX(0);
+		//rubik->translateX(0);
+		command = 1;
 	}
 	if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
 	{
-		rubik->translateX(1);
+		//rubik->translateX(1);
+		command = 2;
 	}
 	if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
 	{
-		rubik->translateX(2);
+		//rubik->translateX(2);
+		command = 3;
 	}
 
 	//handle y
 	if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
 	{
-		rubik->translateY(0);
+		//rubik->translateY(0);
+		command = 4;
 	}
 	if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS)
 	{
-		rubik->translateY(1);
+		//rubik->translateY(1);
+		command = 5;
 	}
 	if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS)
 	{
-		rubik->translateY(2);
+		//rubik->translateY(2);
+		command = 6;
 	}
 
 	//handle z
 	if (glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS)
 	{
-		rubik->translateZ(0);
+		//rubik->translateZ(0);
+		command = 7;
 	}
 	if (glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS)
 	{
-		rubik->translateZ(1);
+		//rubik->translateZ(1);
+		command = 8;
 	}
 	if (glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS)
 	{
-		rubik->translateZ(2);
+		//rubik->translateZ(2);
+		command = 9;
 	}
 
+}
+
+void operation() {
+	//angle = (angle + PI/16 * dt);
+	if (angle < 90.0f)
+	{
+		switch (command)
+		{
+		case 1: rubik->translateX(0, angularSpeed, dt);
+				angle += angularSpeed * dt;
+				break;
+
+		case 2: rubik->translateX(1, angularSpeed, dt);
+				angle += angularSpeed * dt;
+				break;
+
+		case 3: rubik->translateX(2, angularSpeed, dt);
+				angle += angularSpeed * dt;
+				break;
+
+		case 4: rubik->translateY(0, angularSpeed, dt);
+				angle += angularSpeed * dt;
+				break;
+
+		case 5: rubik->translateY(1, angularSpeed, dt);
+				angle += angularSpeed * dt;
+				break;
+
+		case 6: rubik->translateY(2, angularSpeed, dt);
+				angle += angularSpeed * dt;
+				break;
+
+		case 7: rubik->translateZ(0, angularSpeed, dt);
+				angle += angularSpeed * dt;
+				break;
+
+		case 8: rubik->translateZ(1, angularSpeed, dt);
+				angle += angularSpeed * dt;
+				break;
+
+		case 9: rubik->translateZ(2, angularSpeed, dt);
+				angle += angularSpeed * dt;
+				break;
+		}
+	}
+	else {
+		switch (command)
+		{
+		case 1: rubik->transferX(0);
+				break;
+
+		case 2: rubik->transferX(1);
+				break;
+
+		case 3: rubik->transferX(2);
+				break;
+				
+		case 4: rubik->transferY(0);
+				break;
+
+		case 5: rubik->transferY(1);
+				break;
+
+		case 6: rubik->transferY(2);
+				break;
+				
+		case 7: rubik->transferZ(0);
+				break;
+
+		case 8: rubik->transferZ(1);
+				break;
+
+		case 9: rubik->transferZ(2);
+				break;
+		}
+
+		command = -1;
+		angle = 0.0f;
+	}
 }
