@@ -38,6 +38,7 @@ bool isLighting = true;
 //animation 
 int command = -1;
 float angle = 0.0f;
+float angularSpeed = 180.0f;
 float dt;
 float PI = 3.141593;
 float time;
@@ -355,40 +356,40 @@ void operation() {
 	{
 		switch (command)
 		{
-		case 1: rubik->translateX(0);
-				angle += 3.0f;
+		case 1: rubik->translateX(0, angularSpeed, dt);
+				angle += angularSpeed * dt;
 				break;
 
-		case 2: rubik->translateX(1);
-				angle += 3.0f;
+		case 2: rubik->translateX(1, angularSpeed, dt);
+				angle += angularSpeed * dt;
 				break;
 
-		case 3: rubik->translateX(2);
-				angle += 3.0f;
+		case 3: rubik->translateX(2, angularSpeed, dt);
+				angle += angularSpeed * dt;
 				break;
 
-		case 4: rubik->translateY(0);
-				angle += 3.0f;
+		case 4: rubik->translateY(0, angularSpeed, dt);
+				angle += angularSpeed * dt;
 				break;
 
-		case 5: rubik->translateY(1);
-				angle += 3.0f;
+		case 5: rubik->translateY(1, angularSpeed, dt);
+				angle += angularSpeed * dt;
 				break;
 
-		case 6: rubik->translateY(2);
-				angle += 3.0f;
+		case 6: rubik->translateY(2, angularSpeed, dt);
+				angle += angularSpeed * dt;
 				break;
 
-		case 7: rubik->translateZ(0);
-				angle += 3.0f;
+		case 7: rubik->translateZ(0, angularSpeed, dt);
+				angle += angularSpeed * dt;
 				break;
 
-		case 8: rubik->translateZ(1);
-				angle += 3.0f;
+		case 8: rubik->translateZ(1, angularSpeed, dt);
+				angle += angularSpeed * dt;
 				break;
 
-		case 9: rubik->translateZ(2);
-				angle += 3.0f;
+		case 9: rubik->translateZ(2, angularSpeed, dt);
+				angle += angularSpeed * dt;
 				break;
 		}
 	}

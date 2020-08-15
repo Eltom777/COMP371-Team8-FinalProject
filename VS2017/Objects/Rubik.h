@@ -16,9 +16,9 @@ public:
 	float angle = 0.0f;
 
 	//operations
-	void translateX(int k);
-	void translateY(int k);
-	void translateZ(int k);
+	void translateX(int k, float angularSpeed, float dt);
+	void translateY(int k, float angularSpeed, float dt);
+	void translateZ(int k, float angularSpeed, float dt);
 
 	//transfer cubies in array
 	void transferX(int k);

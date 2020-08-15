@@ -46,9 +46,9 @@ void Rubik::setup() {
 	baseTest = cubies[1][1][0];
 }
 
-void Rubik::translateX(int k)
+void Rubik::translateX(int k, float angularSpeed, float dt)
 {
-	glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(3.0f), glm::vec3(0.0f, 0.0f, 0.1f));
+	glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(angularSpeed * dt), glm::vec3(0.0f, 0.0f, 0.1f));
 
 	modelMatrix = t * modelMatrix;
 
@@ -60,9 +60,9 @@ void Rubik::translateX(int k)
 }
 
 
-void Rubik::translateY(int k)
+void Rubik::translateY(int k, float angularSpeed, float dt)
 {
-	glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(3.0f), glm::vec3(0.0f, 0.1f, 0.0f));
+	glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(angularSpeed * dt), glm::vec3(0.0f, 0.1f, 0.0f));
 
 	modelMatrix = t * modelMatrix;
 
@@ -73,9 +73,9 @@ void Rubik::translateY(int k)
 	}
 }
 
-void Rubik::translateZ(int k)
+void Rubik::translateZ(int k, float angularSpeed, float dt)
 {
-	glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(3.0f), glm::vec3(0.1f, 0.0f, 0.0f));
+	glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(angularSpeed * dt), glm::vec3(0.1f, 0.0f, 0.0f));
 
 	modelMatrix = t * modelMatrix;
 
