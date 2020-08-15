@@ -141,7 +141,6 @@ void Rubik::draw(Shader* shaderProgram, const bool isTexture) {
 			}
 		}
 	}
-	
 }
 
 
