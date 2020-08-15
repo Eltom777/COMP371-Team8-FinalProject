@@ -15,7 +15,6 @@ Rubik::Rubik() {
 	cubies;
 
 	filename = "../Assets/Textures/tch.png";
-	
 	/*this->isLetter = isLetter;
 	if (isLetter) {
 		filename = "../Assets/Textures/Wood.jpg";
