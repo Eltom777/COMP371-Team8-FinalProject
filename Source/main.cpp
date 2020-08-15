@@ -86,15 +86,6 @@ void setUpProjection(Shader* shaderProgram, Camera* camera) {
 	shaderProgram->setMat4("projectionMatrix", Projection);
 }
 
-void setUpProjection(Shader* shaderProgram) {
-	// Set up Perspective View
-	glm::mat4 Projection = glm::perspective(glm::radians(45.0f),  // field of view in degrees
-		(float)width / height,     // aspect ratio
-		0.01f, 100.0f);      // near and far (near > 0)
-
-	shaderProgram->setMat4("projectionMatrix", Projection);
-}
-
 
 /*
 Method for changing the render mode of all the models.
@@ -165,7 +156,6 @@ int main(int argc, char* argv[])
 	//Load Texture and VAO for Models
 	rubik->create();
 
-	double time = glfwGetTime();
 	// Entering Main Loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -215,6 +205,7 @@ int main(int argc, char* argv[])
 
 		// Handle inputs
 		camera_ptr->handleKeyboardInputs();
+
 	}
 	
 	// Shutdown GLFW
@@ -264,51 +255,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		else {
 			isLighting = true;
 		}
-	}
-
-	//DOESN'T WORK BECAUSE IF YOU MOVE X, THEN THE POSITIONS ARE MESSED UP WHEN MOVING Y OR Z
-	//MAYBE MAKE AN ARRAY OR A LINKED LIST THAT'S UPDATED EVERYTIME YOU DO A MOVE
-	//AND WHEN YOU PRESS 1, INSTEAD OF GOING THROUGH A NESTED LOOP, IT GOES THROUGH THE ARRAY
-	//handle x
-	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
-	{
-		rubik->translateX(0);
-	}
-	if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
-	{
-		rubik->translateX(1);
-	}
-	if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
-	{
-		rubik->translateX(2);
-	}
-
-	//handle y
-	if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
-	{
-		rubik->translateY(0);
-	}
-	if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS)
-	{
-		rubik->translateY(1);
-	}
-	if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS)
-	{
-		rubik->translateY(2);
-	}
-
-	//handle z
-	if (glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS)
-	{
-		rubik->translateZ(0);
-	}
-	if (glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS)
-	{
-		rubik->translateZ(1);
-	}
-	if (glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS)
-	{
-		rubik->translateZ(2);
 	}
 
 }
