@@ -73,6 +73,7 @@ Cubie::Cubie()
 
 	cubeChild = NULL;
 	//sibling = NULL;
+	filename = "../../Assets/Textures/tch.png";
 }
 
 Cubie::~Cubie() {
@@ -125,7 +126,13 @@ Cubie* Cubie::getChild()
 	return this->cubeChild;
 }
 
+void Cubie::create() {
+	cubieVAO = createCubieVAO();
+	textureId = loadTexture(filename);
+}
+
 int Cubie::createCubieVAO() {
+	textureId = loadTexture(filename);
 	GLuint vao;
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);

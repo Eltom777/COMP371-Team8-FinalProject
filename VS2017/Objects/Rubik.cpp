@@ -11,6 +11,8 @@ Rubik::Rubik() {
 
 	setup();
 	cubies;
+
+	filename = "../../Assets/Textures/tch.png";
 	
 	/*this->isLetter = isLetter;
 	if (isLetter) {
@@ -178,7 +180,7 @@ void Rubik::draw(Shader* shaderProgram, const bool isTexture) {
 
 void Rubik::create() {
 	cubeVAO = cubies[0][0][0].createCubieVAO();
-	//textureId = loadTexture(filename); -> for texture
+	textureId = loadTexture(filename); // -> for texture
 }
 
 /*

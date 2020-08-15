@@ -4,8 +4,9 @@
 #include <GL/glew.h>
 #include <Shader.h>
 #include "Grid.h"
+#include <Object.h>
 
-class Cubie {
+class Cubie : Object {
 public:
 	const struct TexturedColoredVertex
 	{
@@ -27,6 +28,8 @@ public:
 	void setTranslation(vec3 t);
 	void updateTranslation(mat4 t);
 
+	void create();
+
 	//void updateChild(Cubie* c, Sphere* s);
 	void updateChild(Cubie* c);
 	//void getChild();
@@ -35,6 +38,9 @@ public:
 	Cubie* cubeChild;
 	//Sphere* sphereChild;
 	//Cubie* sibling;
+	GLuint textureId;
+	GLuint cubieVAO;
+
 private:
 	static const TexturedColoredVertex vertices[];
 	mat4 modelMatrix;
@@ -43,5 +49,7 @@ private:
 	mat4 scalingMatrix;
 	Grid* gridPointer;
 	float scalingFactor = 1.0f / 3.0f;
+
+	char* filename; // texture location
 };
 
