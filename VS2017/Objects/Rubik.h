@@ -16,7 +16,6 @@ public:
 	float angle = 0.0f;
 
 	//operations
-	void translateX(mat4 t, int k);
 	void translateX(int k);
 	void translateY(int k);
 	void translateZ(int k);

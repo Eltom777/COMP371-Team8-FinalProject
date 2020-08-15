@@ -286,6 +286,13 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		}
 	}
 
+	// Reset button
+	if (key == GLFW_KEY_R && action == GLFW_PRESS)
+	{
+		rubik->~Rubik();
+		rubik = new Rubik();
+	}
+
 	//DOESN'T WORK BECAUSE IF YOU MOVE X, THEN THE POSITIONS ARE MESSED UP WHEN MOVING Y OR Z
 	//MAYBE MAKE AN ARRAY OR A LINKED LIST THAT'S UPDATED EVERYTIME YOU DO A MOVE
 	//AND WHEN YOU PRESS 1, INSTEAD OF GOING THROUGH A NESTED LOOP, IT GOES THROUGH THE ARRAY
@@ -309,29 +316,35 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	//handle y
 	if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
 	{
-		rubik->translateY(0);
+		//rubik->translateY(0);
+		command = 4;
 	}
 	if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS)
 	{
-		rubik->translateY(1);
+		//rubik->translateY(1);
+		command = 5;
 	}
 	if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS)
 	{
-		rubik->translateY(2);
+		//rubik->translateY(2);
+		command = 6;
 	}
 
 	//handle z
 	if (glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS)
 	{
-		rubik->translateZ(0);
+		//rubik->translateZ(0);
+		command = 7;
 	}
 	if (glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS)
 	{
-		rubik->translateZ(1);
+		//rubik->translateZ(1);
+		command = 8;
 	}
 	if (glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS)
 	{
-		rubik->translateZ(2);
+		//rubik->translateZ(2);
+		command = 9;
 	}
 
 }
@@ -340,21 +353,76 @@ void operation() {
 	//angle = (angle + PI/16 * dt);
 	if (angle < 90.0f)
 	{
-		if (command == 1) {
-			
-			rubik->translateX(0);
-			angle += 3.0f;
-		}
-		if (command == 2) {
-			rubik->translateX(1);
-			angle += 3.0f;
-		}
-		if (command == 3) {
-			rubik->translateX(2);
-			angle += 3.0f;
+		switch (command)
+		{
+		case 1: rubik->translateX(0);
+				angle += 3.0f;
+				break;
+
+		case 2: rubik->translateX(1);
+				angle += 3.0f;
+				break;
+
+		case 3: rubik->translateX(2);
+				angle += 3.0f;
+				break;
+
+		case 4: rubik->translateY(0);
+				angle += 3.0f;
+				break;
+
+		case 5: rubik->translateY(1);
+				angle += 3.0f;
+				break;
+
+		case 6: rubik->translateY(2);
+				angle += 3.0f;
+				break;
+
+		case 7: rubik->translateZ(0);
+				angle += 3.0f;
+				break;
+
+		case 8: rubik->translateZ(1);
+				angle += 3.0f;
+				break;
+
+		case 9: rubik->translateZ(2);
+				angle += 3.0f;
+				break;
 		}
 	}
 	else {
+		switch (command)
+		{
+		case 1: rubik->transferX(0);
+				break;
+
+		case 2: rubik->transferX(1);
+				break;
+
+		case 3: rubik->transferX(2);
+				break;
+
+		case 4: rubik->transferY(0);
+				break;
+
+		case 5: rubik->transferY(1);
+				break;
+
+		case 6: rubik->transferY(2);
+				break;
+
+		case 7: rubik->transferZ(0);
+				break;
+
+		case 8: rubik->transferZ(1);
+				break;
+
+		case 9: rubik->transferZ(2);
+				break;
+		}
+
 		command = -1;
 		angle = 0.0f;
 	}

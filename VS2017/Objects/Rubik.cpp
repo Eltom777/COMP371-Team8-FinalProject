@@ -260,5 +260,5 @@ void Rubik::transferZ(int k) {
 
 
 Rubik::~Rubik() {
-	
+
 }
