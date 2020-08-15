@@ -46,13 +46,11 @@ void Rubik::setup() {
 	baseTest = cubies[1][1][0];
 }
 
-void Rubik::translateX(int k, float angle)
+void Rubik::translateX(int k)
 {
-	glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0.0f, 0.0f, 0.1f)); //glm::radians(90.0f)
-	
-	modelMatrix = t * modelMatrix;
+	glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(3.0f), glm::vec3(0.0f, 0.0f, 0.1f));
 
-	//TO FIX: make it move starting from the middle cube instead...
+	modelMatrix = t * modelMatrix;
 
 	for (int i = 0; i < DIM; i++) {
 		for (int j = 0; j < DIM; j++) {
@@ -64,7 +62,7 @@ void Rubik::translateX(int k, float angle)
 
 void Rubik::translateY(int k)
 {
-	glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(2.0f), glm::vec3(0.0f, 0.1f, 0.0f));
+	glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(3.0f), glm::vec3(0.0f, 0.1f, 0.0f));
 
 	modelMatrix = t * modelMatrix;
 
@@ -77,7 +75,7 @@ void Rubik::translateY(int k)
 
 void Rubik::translateZ(int k)
 {
-	glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(2.0f), glm::vec3(0.1f, 0.0f, 0.0f));
+	glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(3.0f), glm::vec3(0.1f, 0.0f, 0.0f));
 
 	modelMatrix = t * modelMatrix;
 

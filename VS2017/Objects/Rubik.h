@@ -13,9 +13,11 @@ public:
 	Rubik();
 	~Rubik();
 	void setup();
+	float angle = 0.0f;
 
 	//operations
-	void translateX(int k, float angle);
+	void translateX(mat4 t, int k);
+	void translateX(int k);
 	void translateY(int k);
 	void translateZ(int k);
 

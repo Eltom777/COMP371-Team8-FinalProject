@@ -337,17 +337,21 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 }
 
 void operation() {
-	if (angle <= glm::radians(90.0f)) {
-		//angle should be controlled to land at 90.0f, right now its continously increased until it reaches 90.0f
-		angle = (angle + PI/16 * dt);
+	//angle = (angle + PI/16 * dt);
+	if (angle < 90.0f)
+	{
 		if (command == 1) {
-			rubik->translateX(0, angle);
+			
+			rubik->translateX(0);
+			angle += 3.0f;
 		}
 		if (command == 2) {
-			rubik->translateX(1, angle);
+			rubik->translateX(1);
+			angle += 3.0f;
 		}
 		if (command == 3) {
-			rubik->translateX(2, angle);
+			rubik->translateX(2);
+			angle += 3.0f;
 		}
 	}
 	else {
