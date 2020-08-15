@@ -403,7 +403,7 @@ void operation() {
 
 		case 3: rubik->transferX(2);
 				break;
-
+				
 		case 4: rubik->transferY(0);
 				break;
 
@@ -412,7 +412,7 @@ void operation() {
 
 		case 6: rubik->transferY(2);
 				break;
-
+				
 		case 7: rubik->transferZ(0);
 				break;
 

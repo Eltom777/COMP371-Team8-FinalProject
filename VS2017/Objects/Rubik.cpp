@@ -187,75 +187,146 @@ void Rubik::create() {
 	should be executed once the animation is complete 
 */
 void Rubik::transferX(int k) {
-	Cubie temp = cubies[k][0][1];
-	Cubie temp2 = cubies[k][0][2];
+	/*Cubie temp = cubies[k][0][1];
+	Cubie temp2 = cubies[k][0][2];*/
+
+	/*Cubie temp = cubies[k][0][2];
+	Cubie temp2 = cubies[k][2][2];*/
+	Cubie temp;
+	Cubie temp2;
 
 	//swap all the cubies to their new indices (CCW)
-	cubies[k][0][1] = cubies[k][0][0];
-	cubies[k][0][2] = temp;
-
-	temp = cubies[k][1][2];
-	cubies[k][1][2] = temp2;
-
+	//corners
+	temp = cubies[k][0][2];
+	cubies[k][0][2] = cubies[k][0][0];
 	temp2 = cubies[k][2][2];
 	cubies[k][2][2] = temp;
+	temp = cubies[k][2][0];
+	cubies[k][2][0] = temp2;
+	cubies[k][0][0] = temp;
 
+	//sides
+	temp = cubies[k][0][1];
+	cubies[k][0][1] = cubies[k][1][0];
+	temp2 = cubies[k][1][2];
+	cubies[k][1][2] = temp;
 	temp = cubies[k][2][1];
 	cubies[k][2][1] = temp2;
+	cubies[k][1][0] = temp;
 
-	temp2 = cubies[k][2][0];
-	cubies[k][2][0] = temp;
 
-	cubies[k][0][0] = cubies[k][1][0];
-	cubies[k][1][0] = temp2;
+	////swap all the cubies to their new indices (CCW)
+	//cubies[k][0][1] = cubies[k][0][0];
+	//cubies[k][0][2] = temp;
+
+	//temp = cubies[k][1][2];
+	//cubies[k][1][2] = temp2;
+
+	//temp2 = cubies[k][2][2];
+	//cubies[k][2][2] = temp;
+
+	//temp = cubies[k][2][1];
+	//cubies[k][2][1] = temp2;
+
+	//temp2 = cubies[k][2][0];
+	//cubies[k][2][0] = temp;
+
+	//cubies[k][0][0] = cubies[k][1][0];
+	//cubies[k][1][0] = temp2;
 }
 
 void Rubik::transferY(int k) {
-	Cubie temp = cubies[2][k][1];
-	Cubie temp2 = cubies[2][k][2];
+	Cubie temp;
+	Cubie temp2;
 
 	//swap all the cubies to their new indices (CCW)
-	cubies[2][k][1] = cubies[2][k][0];
-	cubies[2][k][2] = temp;
-
-	temp = cubies[1][k][2];
-	cubies[1][k][2] = temp2;
-
+	//corners
+	temp = cubies[0][k][0];
+	cubies[0][k][0] = cubies[2][k][0];
 	temp2 = cubies[0][k][2];
 	cubies[0][k][2] = temp;
+	temp = cubies[2][k][2];
+	cubies[2][k][2] = temp2;
+	cubies[2][k][0] = temp;
 
-	temp = cubies[0][k][1];
-	cubies[0][k][1] = temp2;
+	//sides
+	temp = cubies[1][k][0];
+	cubies[1][k][0] = cubies[2][k][1];
+	temp2 = cubies[0][k][1];
+	cubies[0][k][1] = temp;
+	temp = cubies[1][k][2];
+	cubies[1][k][2] = temp2;
+	cubies[2][k][1] = temp;
 
-	temp2 = cubies[0][k][0];
-	cubies[0][k][0] = temp;
+	//Cubie temp = cubies[2][k][1];
+	//Cubie temp2 = cubies[2][k][2];
 
-	cubies[2][k][0] = cubies[1][k][0];
-	cubies[1][k][0] = temp2;
+	////swap all the cubies to their new indices (CCW)
+	//cubies[2][k][1] = cubies[2][k][0];
+	//cubies[2][k][2] = temp;
+
+	//temp = cubies[1][k][2];
+	//cubies[1][k][2] = temp2;
+
+	//temp2 = cubies[0][k][2];
+	//cubies[0][k][2] = temp;
+
+	//temp = cubies[0][k][1];
+	//cubies[0][k][1] = temp2;
+
+	//temp2 = cubies[0][k][0];
+	//cubies[0][k][0] = temp;
+
+	//cubies[2][k][0] = cubies[1][k][0];
+	//cubies[1][k][0] = temp2;
 }
 
 void Rubik::transferZ(int k) {
-	Cubie temp = cubies[1][0][k];
-	Cubie temp2 = cubies[0][0][k];
+	//swap all the cubies to their new indices (CCW)
+	Cubie temp;
+	Cubie temp2;
 
 	//swap all the cubies to their new indices (CCW)
-	cubies[1][0][k] = cubies[2][0][k];
-	cubies[0][0][k] = temp;
-
-	temp = cubies[0][1][k];
-	cubies[0][1][k] = temp2;
-
+	//corners
+	temp = cubies[0][0][k];
+	cubies[0][0][k] = cubies[2][0][k];
 	temp2 = cubies[0][2][k];
 	cubies[0][2][k] = temp;
+	temp = cubies[2][2][k];
+	cubies[2][2][k] = temp2;
+	cubies[2][0][k] = temp;
 
+	//sides
+	temp = cubies[1][0][k];
+	cubies[1][0][k] = cubies[2][1][k];
+	temp2 = cubies[0][1][k];
+	cubies[0][1][k] = temp;
 	temp = cubies[1][2][k];
 	cubies[1][2][k] = temp2;
+	cubies[2][1][k] = temp;
 
-	temp2 = cubies[2][2][k];
-	cubies[2][2][k] = temp;
 
-	cubies[k][0][0] = cubies[2][1][k];
-	cubies[2][0][k] = temp2;
+	//Cubie temp = cubies[1][0][k];
+	//Cubie temp2 = cubies[0][0][k];
+
+	////swap all the cubies to their new indices (CCW)
+	//cubies[1][0][k] = cubies[2][0][k];
+	//cubies[0][0][k] = temp;
+
+	//temp = cubies[0][1][k];
+	//cubies[0][1][k] = temp2;
+
+	//temp2 = cubies[0][2][k];
+	//cubies[0][2][k] = temp;
+
+	//temp = cubies[1][2][k];
+	//cubies[1][2][k] = temp2;
+
+	//temp2 = cubies[2][2][k];
+	//cubies[2][2][k] = temp;
+
+	//cubies[k][0][0] = cubies[2][1][k];
+	//cubies[2][0][k] = temp2;
 }
 
 
