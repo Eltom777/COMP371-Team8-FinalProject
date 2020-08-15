@@ -23,9 +23,9 @@ Rubik::Rubik() {
 
 void Rubik::setup() {
 
-	float xlength = 0.68;
-	float ylength = 0.68;
-	float zlength = 0.68;
+	float xlength = 0.33;
+	float ylength = 0.33;
+	float zlength = 0.33;
 
 	float shift = 0.33 + offset;
 
@@ -36,55 +36,11 @@ void Rubik::setup() {
 				cubies[i][j][k].setTranslation(vec3(xlength, ylength, zlength));
 				xlength -= (shift);
 			}
-			xlength = 0.68;
+			xlength = 0.33;
 			ylength -= (shift);
 		}
-		ylength = 0.68;
+		ylength = 0.33;
 		zlength -= (shift);
-	}
-
-	baseTest = cubies[1][1][0];
-}
-
-void Rubik::translateX(int k)
-{
-	glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(2.0f), glm::vec3(0.0f, 0.0f, 0.1f)); //glm::radians(90.0f)
-	
-	modelMatrix = t * modelMatrix;
-
-	//TO FIX: make it move starting from the middle cube instead...
-
-	for (int i = 0; i < DIM; i++) {
-		for (int j = 0; j < DIM; j++) {
-			cubies[k][i][j].updateTranslation(t); //can increment x
-		}
-	}
-}
-
-
-void Rubik::translateY(int k)
-{
-	glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(2.0f), glm::vec3(0.0f, 0.1f, 0.0f));
-
-	modelMatrix = t * modelMatrix;
-
-	for (int i = 0; i < DIM; i++) {
-		for (int j = 0; j < DIM; j++) {
-			cubies[i][k][j].updateTranslation(t); //can increment y
-		}
-	}
-}
-
-void Rubik::translateZ(int k)
-{
-	glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(2.0f), glm::vec3(0.1f, 0.0f, 0.0f));
-
-	modelMatrix = t * modelMatrix;
-
-	for (int i = 0; i < DIM; i++) {
-		for (int j = 0; j < DIM; j++) {
-			cubies[i][j][k].updateTranslation(t); //can increment z
-		}
 	}
 }
 
@@ -118,8 +74,18 @@ void Rubik::translateZ(int k)
 //	translateModel(tempworldMatrix);
 //}
 //
-
-
+//void Rubik::translateModel(mat4 t)
+//{
+//	modelMatrix = t * modelMatrix;
+//
+//	for (int i = 0; i < numberOfTopCubies; i++) {
+//		topComponents[i].updateTranslation(t);
+//	}
+//	for (int i = 0; i < numberOfBotCubies; i++) {
+//		bottomComponents[i].updateTranslation(t);
+//	}
+//}
+//
 //void Rubik::translateModelTop(mat4 t)
 //{
 //	modelMatrix = t * modelMatrix;
