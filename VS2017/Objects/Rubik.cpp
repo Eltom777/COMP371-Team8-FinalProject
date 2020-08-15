@@ -12,7 +12,7 @@ Rubik::Rubik() {
 	setup();
 	cubies;
 
-	filename = "../../Assets/Textures/tch.jpg";
+	filename = "../Assets/Textures/tch.jpg";
 	
 	/*this->isLetter = isLetter;
 	if (isLetter) {
