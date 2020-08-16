@@ -35,9 +35,7 @@ static int currentModel = -1;
 // Textures not enabled yet
 bool isTexture = false;
 bool isLighting = true;
-
-//irrKlang Sound engine
-
+bool isMusic = true;
 
 //animation 
 int command = -1;
@@ -80,7 +78,7 @@ Rubik* rubik = new Rubik();
 //Initialize sound Engine
 //start the sound engine with default parameters
 irrklang::ISoundEngine* engine = irrklang::createIrrKlangDevice();
-
+irrklang::ISound* music;
 
 void initialize() {
 	glfwInit();
@@ -191,7 +189,10 @@ int main(int argc, char* argv[])
 	rubik->create();
 
 	// play some sound stream, looped
-	engine->play2D("../Assets/Sound/BackingTrack.mp3", true);
+	//music is not null if parameters 'track', 'startPaused' or 'enableSoundEffects' have been set to true.
+	music = engine->play2D("../Assets/Sound/BackingTrack.mp3", true, false, false, irrklang::ESM_AUTO_DETECT, true);
+	music->setVolume(0.8f);
+	
 
 	//double time = glfwGetTime();
 	// Entering Main Loop
@@ -293,6 +294,17 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		}
 		else {
 			isTexture = true;
+		}
+	}
+
+	if (key == GLFW_KEY_M && action == GLFW_PRESS) {
+		isMusic = !isMusic;
+
+		if (isMusic) {
+			music->setIsPaused(false);
+		}
+		else {
+			music->setIsPaused(true);
 		}
 	}
 
