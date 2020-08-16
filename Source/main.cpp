@@ -315,6 +315,8 @@ int main(int argc, char* argv[])
 	setUpProjectionText(textShader);
 
 	// Load Texture and VAO for Models
+	setUpProjection(shaderProgram, camera_ptr);
+
 	rubik->create();
 
 	// Play some sound stream, looped

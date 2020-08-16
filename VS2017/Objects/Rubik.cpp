@@ -121,7 +121,18 @@ void Rubik::draw(Shader* shaderProgram, const bool isTexture) {
 
 void Rubik::create() {
 	cubeVAO = cubies[0][0][0].createCubieVAO();
-	textureId = loadTexture(filename); // -> for texture
+	//textureId = loadTexture(filename); // -> for texture
+
+	vector<std::string> faces
+	{
+		"../Assets/Textures/skybox/right.jpg",
+		"../Assets/Textures/skybox/left.jpg",
+		"../Assets/Textures/skybox/top.jpg",
+		"../Assets/Textures/skybox/bottom.jpg",
+		"../Assets/Textures/skybox/front.jpg",
+		"../Assets/Textures/skybox/back.jpg"
+	};
+	textureId = loadCubemap(faces);
 }
 
 void Rubik::transferX(int k) {
