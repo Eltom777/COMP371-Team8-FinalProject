@@ -10,7 +10,6 @@
 // Modified by Team 8 for Assignment 2 due 27/07/2020.
 //
 //
-
 #include <iostream>
 #include <string>
 
@@ -18,6 +17,8 @@
 #include <GL/glew.h>    // Include GLEW - OpenGL Extension Wrangler
 #include <GLFW/glfw3.h> // GLFW provides a cross-platform interface for creating a graphical context,
 						// initializing OpenGL and binding inputs
+
+#include <irrKlang.h>	//irrKlang is a sound engine to play WAV, MP3, OGG, FLAC, MOD, XM, IT, S3M and more file formats
 
 #include <glm/glm.hpp>  // GLM is an optimized math library with syntax to similar to OpenGL Shading Language
 #include <glm/gtc/matrix_transform.hpp>
@@ -34,6 +35,9 @@ static int currentModel = -1;
 // Textures not enabled yet
 bool isTexture = false;
 bool isLighting = true;
+
+//irrKlang Sound engine
+
 
 //animation 
 int command = -1;
@@ -72,6 +76,10 @@ void operation();
 
 //Rubik's Cube
 Rubik* rubik = new Rubik();
+
+//Initialize sound Engine
+//start the sound engine with default parameters
+irrklang::ISoundEngine* engine = irrklang::createIrrKlangDevice();
 
 
 void initialize() {
@@ -160,6 +168,11 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
+	if (!engine) {
+		std::cerr << "Failed to load sound engine" << std::endl;
+		return -1; // error starting up the engine
+	}
+
 	// Black background
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -176,6 +189,9 @@ int main(int argc, char* argv[])
 
 	//Load Texture and VAO for Models
 	rubik->create();
+
+	// play some sound stream, looped
+	engine->play2D("../Assets/Sound/BackingTrack.mp3", true);
 
 	//double time = glfwGetTime();
 	// Entering Main Loop
@@ -241,6 +257,9 @@ int main(int argc, char* argv[])
 	// Shutdown GLFW
 	glfwTerminate();
 
+	// Shutdown Sound engine
+	engine->drop();
+
 	return 0;
 }
 
@@ -300,58 +319,57 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	//handle x
 	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
 	{
-		//rubik->translateX(0);
+		engine->play2D("../Assets/Sound/click.wav", false);
 		command = 1;
 	}
 	if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
 	{
-		//rubik->translateX(1);
+		engine->play2D("../Assets/Sound/click.wav", false);
 		command = 2;
 	}
 	if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
 	{
-		//rubik->translateX(2);
+		engine->play2D("../Assets/Sound/click.wav", false);
 		command = 3;
 	}
 
 	//handle y
 	if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
 	{
-		//rubik->translateY(0);
+		engine->play2D("../Assets/Sound/click.wav", false);
 		command = 4;
 	}
 	if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS)
 	{
-		//rubik->translateY(1);
+		engine->play2D("../Assets/Sound/click.wav", false);
 		command = 5;
 	}
 	if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS)
 	{
-		//rubik->translateY(2);
+		engine->play2D("../Assets/Sound/click.wav", false);
 		command = 6;
 	}
 
 	//handle z
 	if (glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS)
 	{
-		//rubik->translateZ(0);
+		engine->play2D("../Assets/Sound/click.wav", false);
 		command = 7;
 	}
 	if (glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS)
 	{
-		//rubik->translateZ(1);
+		engine->play2D("../Assets/Sound/click.wav", false);
 		command = 8;
 	}
 	if (glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS)
 	{
-		//rubik->translateZ(2);
+		engine->play2D("../Assets/Sound/click.wav", false);
 		command = 9;
 	}
 
 }
 
 void operation() {
-	//angle = (angle + PI/16 * dt);
 	if (angle < 90.0f)
 	{
 		switch (command)
