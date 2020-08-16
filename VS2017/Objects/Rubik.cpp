@@ -3,6 +3,8 @@
 #include "Shader.h"
 #include "Object.h"
 
+#include <iostream>
+
 mat4 Rubik::getModelMatrix() {
 	return modelMatrix;
 }
@@ -12,7 +14,7 @@ Rubik::Rubik() {
 	setup();
 	cubies;
 
-	filename = "../../Assets/Textures/tch.png";
+	filename = "../Assets/Textures/tch.png";
 	
 	/*this->isLetter = isLetter;
 	if (isLetter) {
@@ -50,6 +52,7 @@ void Rubik::setup() {
 
 void Rubik::translateX(int k, float angularSpeed, float dt)
 {
+	//glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(angularSpeed * dt), glm::vec3(0.0f, 0.0f, 0.1f));
 	glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(5.0f), glm::vec3(0.0f, 0.0f, 0.1f));
 
 	modelMatrix = t * modelMatrix;
@@ -64,6 +67,7 @@ void Rubik::translateX(int k, float angularSpeed, float dt)
 
 void Rubik::translateY(int k, float angularSpeed, float dt)
 {
+	//glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(angularSpeed * dt), glm::vec3(0.0f, 0.1f, 0.0f));
 	glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(5.0f), glm::vec3(0.0f, 0.1f, 0.0f));
 
 	modelMatrix = t * modelMatrix;
@@ -77,7 +81,8 @@ void Rubik::translateY(int k, float angularSpeed, float dt)
 
 void Rubik::translateZ(int k, float angularSpeed, float dt)
 {
-	glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(5.0f), glm::vec3(0.1f, 0.0f, 0.0f));
+	//glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(angularSpeed * dt), glm::vec3(0.1f, 0.0f, 0.0f));
+	glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(5.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
 	modelMatrix = t * modelMatrix;
 
@@ -153,6 +158,7 @@ void Rubik::draw(Shader* shaderProgram, const bool isTexture) {
 		else {
 			glActiveTexture(GL_TEXTURE2);
 		}
+
 		//bind texture
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textureId);
@@ -180,7 +186,18 @@ void Rubik::draw(Shader* shaderProgram, const bool isTexture) {
 
 void Rubik::create() {
 	cubeVAO = cubies[0][0][0].createCubieVAO();
-	textureId = loadTexture(filename); // -> for texture
+	//textureId = loadTexture(filename); // -> for texture
+
+	vector<std::string> faces
+	{
+		"../Assets/Textures/skybox/right.jpg",
+		"../Assets/Textures/skybox/left.jpg",
+		"../Assets/Textures/skybox/top.jpg",
+		"../Assets/Textures/skybox/bottom.jpg",
+		"../Assets/Textures/skybox/front.jpg",
+		"../Assets/Textures/skybox/back.jpg"
+	};
+	textureId = loadCubemap(faces);
 }
 
 /*

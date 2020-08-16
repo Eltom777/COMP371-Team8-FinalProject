@@ -40,6 +40,7 @@ public:
 	Cubie cubies [DIM][DIM][DIM];
 	Cubie baseTest;
 	GLuint textureId;
+	GLuint cubemapTexture;
 	GLuint cubeVAO;
 protected:
 	mat4 modelMatrix = mat4(1.0f);
