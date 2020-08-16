@@ -297,6 +297,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		}
 	}
 
+	/*
+	turn backing track on and off
+	*/
 	if (key == GLFW_KEY_M && action == GLFW_PRESS) {
 		isMusic = !isMusic;
 
