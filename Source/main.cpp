@@ -173,7 +173,6 @@ int main(int argc, char* argv[])
 	// Set View and Projection matrices on both shaders
 	setUpProjection(shaderProgram, camera_ptr);
 
-
 	//Load Texture and VAO for Models
 	rubik->create();
 
@@ -357,39 +356,48 @@ void operation() {
 		switch (command)
 		{
 		case 1: rubik->translateX(0, angularSpeed, dt);
-				angle += angularSpeed * dt;
+				//angle += angularSpeed * dt;
+				angle += 5.0f;
 				break;
 
 		case 2: rubik->translateX(1, angularSpeed, dt);
-				angle += angularSpeed * dt;
+				//angle += angularSpeed * dt;
+				angle += 5.0f;
 				break;
 
 		case 3: rubik->translateX(2, angularSpeed, dt);
-				angle += angularSpeed * dt;
+				//angle += angularSpeed * dt;
+				angle += 5.0f;
 				break;
 
 		case 4: rubik->translateY(0, angularSpeed, dt);
-				angle += angularSpeed * dt;
+				//angle += angularSpeed * dt;
+				angle += 5.0f;
 				break;
 
 		case 5: rubik->translateY(1, angularSpeed, dt);
-				angle += angularSpeed * dt;
+				//angle += angularSpeed * dt;
+				angle += 5.0f;
 				break;
 
 		case 6: rubik->translateY(2, angularSpeed, dt);
-				angle += angularSpeed * dt;
+				//angle += angularSpeed * dt;
+				angle += 5.0f;
 				break;
 
 		case 7: rubik->translateZ(0, angularSpeed, dt);
-				angle += angularSpeed * dt;
+				//angle += angularSpeed * dt;
+				angle += 5.0f;
 				break;
 
 		case 8: rubik->translateZ(1, angularSpeed, dt);
-				angle += angularSpeed * dt;
+				//angle += angularSpeed * dt;
+				angle += 5.0f;
 				break;
 
 		case 9: rubik->translateZ(2, angularSpeed, dt);
-				angle += angularSpeed * dt;
+				//angle += angularSpeed * dt;
+				angle += 5.0f;
 				break;
 		}
 	}
