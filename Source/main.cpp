@@ -24,6 +24,7 @@
 
 #include <Camera.h>
 #include <Rubik.h>
+#include <Grid.h>
 
 
 using namespace std;
@@ -55,6 +56,13 @@ glm::vec3 lightSourcePosition(0.0f, 3.0f, -1.0f);
 glm::vec3 ambient(0.3f);
 glm::vec3 diffuse(1.0f);
 glm::vec3 specular(1.0f);
+
+// Grid
+void renderGrid(Shader* shaderProgram, Grid objGrid) {
+	// Draw grid
+	objGrid.drawGrid(shaderProgram, false, true); // 3 vertices, starting at index 0
+}
+
 
 // Random location range
 const float MIN_RAND = -0.5f, MAX_RAND = 0.5f;
@@ -163,11 +171,15 @@ int main(int argc, char* argv[])
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Compile and link shaders here ...
-	shaderProgram = new Shader("../Assets/Shaders/texturedVertexShader.vertexshader", "../Assets/Shaders/texturedFragmentShader.Fragmentshader");
-	shadowShader = new Shader("../Assets/Shaders/shadow_vertex.glsl", "../Assets/Shaders/shadow_fragment.glsl");
+	shaderProgram = new Shader("../Assets/Shaders/texturedVertexShader.glsl", "../Assets/Shaders/texturedFragmentShader.glsl");
+	//shadowShader = new Shader("../Assets/Shaders/shadow_vertex.glsl", "../Assets/Shaders/shadow_fragment.glsl");
 
 	// Create Camera Object
 	camera_ptr = new Camera(window);
+
+	// Create the floor
+	Grid objGrid;
+	objGrid.setup();
 
 	// Set View and Projection matrices on both shaders
 	setUpProjection(shaderProgram, camera_ptr);
@@ -195,6 +207,9 @@ int main(int argc, char* argv[])
 		dt = time - last;
 		last = time;
 
+		// Draw floor
+		renderGrid(shaderProgram, objGrid);
+
 		// Draw Rubik's Cube models
 		rubik->draw(shaderProgram, isTexture);
 
@@ -202,7 +217,7 @@ int main(int argc, char* argv[])
 		shaderProgram->setMat4("worldMatrix", mat4(1.0f));
 		shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
 		shaderProgram->setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-		shaderProgram->setVec3("lightPos", lightSourcePosition);
+		shaderProgram->setVec3("lightPos", camera_ptr->cameraPos);
 		shaderProgram->setVec3("viewPos", camera_ptr->cameraPos);
 
 		// Model Render Mode

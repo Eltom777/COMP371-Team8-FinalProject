@@ -133,6 +133,8 @@ void Rubik::translateZ(int k)
 //	modelMatrix = translationMatrix * scalingMatrix * rotationMatrix * modelMatrix;
 //}
 void Rubik::draw(Shader* shaderProgram, const bool isTexture) {
+	std::cout << "RUBIK is texture " << isTexture << std::endl;
+	shaderProgram->setBool("isTexture", false);
 
 	shaderProgram->use();
 

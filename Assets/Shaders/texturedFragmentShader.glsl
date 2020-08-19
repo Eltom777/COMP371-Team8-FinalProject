@@ -37,9 +37,9 @@ void main()
             break;
         case 1:
             materialAmbient = vec3(0.15f, 0.15f, 0.15f);
-            materialDiffuse = vec3(0.18f, 0.17f, 0.22f);
-            materialSpecular = vec3(0.3f, 0.3f, 0.3f);
-            materialShininess = 32.0f;;
+            materialDiffuse = vec3(0.6f, 0.6f, 0.6f);
+            materialSpecular = vec3(0.8f, 0.8f, 0.8f);
+            materialShininess = 128.0f;;
             break;
         case 2:
             materialAmbient = vec3(0.25f, 0.25f, 0.25f);
@@ -48,6 +48,10 @@ void main()
             materialShininess = 128.0f;;
             break;
         default:
+            materialAmbient = vec3(0.25f, 0.25f, 0.25f);
+            materialDiffuse = vec3(0.4f, 0.4f, 0.4f);
+            materialSpecular = vec3(0.7f, 0.7f, 0.7f);
+            materialShininess = 32.0f;;
             break;
     }
 
@@ -63,18 +67,20 @@ void main()
     // vec4 textureColor = texture( textureSampler, vertexUV );
 
     // ambient
-	float ambientStrength = 4.0;
+	float ambientStrength = 6.0;
 	vec3 ambient = ambientStrength * (materialAmbient * lightColor);
 
     // diffuse
 	vec3 norm = normalize(Normal);
 	// vec3 lightDir = normalize(LightPos - FragPos); // view-space
-    vec3 lightDir = normalize(lightPos); // world space
+    vec3 lightDir = normalize(lightPos - FragPos); // world space
+    // vec3 lightDir = normalize(lightPos - (0, 0, 0)); // world space
+
 	float diff = max(dot(norm, lightDir), 0.0);
 	vec3 diffuse = diff * lightColor * materialDiffuse;
 
     // specular
-	float specularStrength = 10.0;
+	float specularStrength = 2.0;
     vec3 viewDir = normalize(viewPos - FragPos); // World space
 	// vec3 viewDir = normalize(FragPos); // view-space
 	vec3 reflectDir = reflect(-lightDir, norm);
@@ -82,7 +88,7 @@ void main()
 	vec3 specular = specularStrength * (materialSpecular * spec * lightColor);
 
     vec4 tempResult = vec4((ambient + diffuse + specular), 1.0);
-    vec4 result = textureColor; //tempResult * textureColor; //if you want lighting
+    vec4 result = textureColor * tempResult; //tempResult * textureColor; //if you want lighting
 
     FragColor =  result;
 };
