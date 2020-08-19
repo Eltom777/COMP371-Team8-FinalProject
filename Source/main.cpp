@@ -328,9 +328,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		rubik = new Rubik();
 	}
 
-	//DOESN'T WORK BECAUSE IF YOU MOVE X, THEN THE POSITIONS ARE MESSED UP WHEN MOVING Y OR Z
-	//MAYBE MAKE AN ARRAY OR A LINKED LIST THAT'S UPDATED EVERYTIME YOU DO A MOVE
-	//AND WHEN YOU PRESS 1, INSTEAD OF GOING THROUGH A NESTED LOOP, IT GOES THROUGH THE ARRAY
 	//handle x
 	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
 	{
