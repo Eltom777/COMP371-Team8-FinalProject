@@ -191,7 +191,7 @@ int main(int argc, char* argv[])
 	// play some sound stream, looped
 	//music is not null if parameters 'track', 'startPaused' or 'enableSoundEffects' have been set to true.
 	music = engine->play2D("../Assets/Sound/BackingTrack.mp3", true, false, false, irrklang::ESM_AUTO_DETECT, true);
-	music->setVolume(0.8f);
+	music->setVolume(0.3f);
 	
 
 	//double time = glfwGetTime();
@@ -380,6 +380,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	{
 		engine->play2D("../Assets/Sound/click.wav", false);
 		command = 9;
+	}
+
+	// hint sounds
+	if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS)
+	{
+		// insert checking for which version of the puzzle so we can play corresponding hint sound
+		// instead of having 4 different hint buttons
+		engine->play2D("../Assets/Sound/lozhint.wav", false);
 	}
 
 }
