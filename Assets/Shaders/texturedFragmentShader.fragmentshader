@@ -6,7 +6,6 @@ in vec2 vertexUV;
 // Lighting input
 // 0 = wood, 1 = cement, 2 = metal
 flat in int textureType;
-int textureIndex = 0;
 in vec3 Normal;
 in vec3 FragPos;
 // in vec3 LightPos; // view-space
@@ -18,12 +17,6 @@ uniform vec3 lightColor;
 uniform vec3 objectColor;
 
 uniform sampler2D textureSampler;
-/*layout(binding = 3) uniform sampler2D textureSampler1;
-layout(binding = 4) uniform sampler2D textureSampler2;
-layout(binding = 5) uniform sampler2D textureSampler3;
-layout(binding = 6) uniform sampler2D textureSampler4;
-layout(binding = 7) uniform sampler2D textureSampler5;
-layout(binding = 8) uniform sampler2D textureSampler6;*/
         
 out vec4 FragColor;
 void main()

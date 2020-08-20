@@ -91,13 +91,15 @@ void initialize() {
 #endif
 }
 
-void setUpProjection(Shader* shaderProgram, Camera* camera) {
+glm::mat4 setUpProjection(Shader* shaderProgram, Camera* camera) {
 	// Set up Perspective View
 	glm::mat4 Projection = glm::perspective(glm::radians(camera->fov),  // field of view in degrees
 		(float)width / height,     // aspect ratio
 		0.01f, 100.0f);      // near and far (near > 0)
 
 	shaderProgram->setMat4("projectionMatrix", Projection);
+
+	return Projection;
 }
 
 void setUpProjection(Shader* shaderProgram) {
@@ -122,12 +124,14 @@ void renderMode(GLFWwindow* window) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_POINT); // triangle vertices only
 }
 
-void setUpCamera(Camera* camera, Shader* shaderProgram) {
+glm::mat4 setUpCamera(Camera* camera, Shader* shaderProgram) {
 	glm::mat4 viewMatrix = glm::lookAt(camera->cameraPos, // position
 		camera->cameraDirection, // front -- camera.cameraPos + camera.cameraFront
 		camera->cameraUp);  // up
 
 	shaderProgram->setMat4("viewMatrix", viewMatrix);
+
+	return viewMatrix;
 }
 
 double seconds = 0.0;
@@ -168,7 +172,7 @@ int main(int argc, char* argv[])
 	// Compile and link shaders here ...
 	shaderProgram = new Shader("../Assets/Shaders/texturedVertexShader.vertexshader", "../Assets/Shaders/texturedFragmentShader.fragmentshader");
 	shadowShader = new Shader("../Assets/Shaders/shadow_vertex.glsl", "../Assets/Shaders/shadow_fragment.glsl");
-	skyboxShader = new Shader("../Assets/Shaders/skybox2.vertexshader", "../Assets/Shaders/skybox2.fragmentshader");
+	skyboxShader = new Shader("../Assets/Shaders/skybox.vertexshader", "../Assets/Shaders/skybox.fragmentshader");
 
 	// Create Camera Object
 	camera_ptr = new Camera(window);
@@ -178,6 +182,75 @@ int main(int argc, char* argv[])
 
 	//Load Texture and VAO for Models
 	rubik->create();
+
+	float skyboxVertices[] = {
+		// positions          
+		-1.0f,  1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		-1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f
+	};
+
+	unsigned int skyboxVAO, skyboxVBO;
+	glGenVertexArrays(1, &skyboxVAO);
+	glGenBuffers(1, &skyboxVBO);
+	glBindVertexArray(skyboxVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+	vector<std::string> faces
+	{
+		"../Assets/Textures/skybox/right.jpg",
+		"../Assets/Textures/skybox/left.jpg",
+		"../Assets/Textures/skybox/top.jpg",
+		"../Assets/Textures/skybox/bottom.jpg",
+		"../Assets/Textures/skybox/front.jpg",
+		"../Assets/Textures/skybox/back.jpg"
+	};
+	Object obj;
+	GLuint skyboxTexture = obj.loadCubemap(faces);
+
+	skyboxShader->use();
+	skyboxShader->setInt("skybox", 0);
 
 	//double time = glfwGetTime();
 	// Entering Main Loop
@@ -191,7 +264,7 @@ int main(int argc, char* argv[])
 
 		// Set up Perspective View
 		glfwGetWindowSize(window, &width, &height); // if window is resized, get new size to draw perspective view correctly
-		setUpProjection(shaderProgram, camera_ptr);
+		glm::mat4 projection = setUpProjection(shaderProgram, camera_ptr);
 		//setUpProjection(shaderPrograms[1], camera_ptr);
 
 		time = glfwGetTime();
@@ -218,11 +291,27 @@ int main(int argc, char* argv[])
 		shaderProgram->setVec3("viewPos", camera_ptr->cameraPos);
 
 		// Set up Camera
+		glm::mat4 view;
 		if (currentModel == -1) {
-			setUpCamera(camera_ptr, shaderProgram);
+			view = setUpCamera(camera_ptr, shaderProgram);
 			//setUpCamera(camera_ptr, shaderPrograms[1]);
 		}
 
+		// draw skybox as last
+		glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+		skyboxShader->use();
+		view = glm::mat4(glm::mat3(view)); // remove translation from the view matrix
+        skyboxShader->setMat4("view", view);
+		skyboxShader->setMat4("projection", projection);
+		// skybox cube
+		glBindVertexArray(skyboxVAO);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexture);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
+		glDepthFunc(GL_LESS); // set depth function back to default
+
+		shaderProgram->use();
 		// End frame
 		glfwSwapBuffers(window);
 

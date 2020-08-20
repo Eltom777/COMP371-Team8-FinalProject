@@ -35,7 +35,6 @@ public:
 	void rotateModel(mat4 r, GLuint modelMatrixLocation);*/
 	//void draw(GLuint modelMatrixLocation);
 
-	void create(Shader* shaderProgram);
 	void create();
 
 	Cubie cubies [DIM][DIM][DIM];
