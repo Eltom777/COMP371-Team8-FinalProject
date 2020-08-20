@@ -188,20 +188,17 @@ void Rubik::draw(Shader* shaderProgram, const bool isTexture) {
 		for (int j = 0; j < DIM; j++) {
 			for (int k = 0; k < DIM; k++) {
 				shaderProgram->setMat4("worldMatrix", cubies[i][j][k].getModelMatrix());
-				//for (int l = 0; l < textures.size(); l++)
-				//{
-					//shaderProgram->setInt("textureIndex", 1);
-					glActiveTexture(GL_TEXTURE0);
-					glBindTexture(GL_TEXTURE_2D, textures[4]);
-					glDrawArrays(GL_TRIANGLES, 0, 36);
 
-					//here we could call draw() in Cubie.cpp and change each face textures there
-					//once i figure out how to load textures :))))))))))))))))))
-					//OR i can use i/j/k maybe ??
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, textureId);
+				glDrawArrays(GL_TRIANGLES, 0, 36);
 
-				//}
+				//here we could call draw() in Cubie.cpp and change each face textures there
+				//once i figure out how to load textures :))))))))))))))))))
+				//OR i can use i/j/k maybe ??
 				//glDrawArrays(GL_TRIANGLES, 0, 36); 
 				//glDrawArrays(GL_TRIANGLES, 0, 6); for textures somehow ?
+				
 			}
 		}
 	}
@@ -210,7 +207,7 @@ void Rubik::draw(Shader* shaderProgram, const bool isTexture) {
 
 void Rubik::create() {
 	cubeVAO = cubies[0][0][0].createCubieVAO();
-	//textureId = loadTexture(filename); // -> for texture
+	textureId = loadTexture(filename); // -> for texture
 
 	vector<std::string> faces
 	{
@@ -221,8 +218,8 @@ void Rubik::create() {
 		"../Assets/Textures/skybox/front.jpg",
 		"../Assets/Textures/skybox/back.jpg"
 	};
+	//textures = loadTextures(faces);
 	//textureId = loadCubemap(faces);
-	textures = loadCubemap(faces, NULL);
 }
 
 /*

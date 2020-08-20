@@ -8,7 +8,7 @@ class Object
 {
 public:
 	GLuint loadTexture(const char* filename);
-	vector<GLuint> loadCubemap(vector<std::string> faces, Shader* shaderProgram);
-	GLuint Object::loadTextureArray(vector<std::string> faces);
+	GLuint loadCubemap(vector<std::string> faces);
+	vector<GLuint> loadTextures(vector<std::string> faces);
 };
 

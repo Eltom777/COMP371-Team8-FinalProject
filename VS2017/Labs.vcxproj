@@ -130,7 +130,6 @@
     <ClCompile Include="Objects\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Source\drawtext.h" />
     <ClInclude Include="..\Source\OBJloader.h" />
     <ClInclude Include="..\Source\OBJloaderV2.h" />
     <ClInclude Include="..\Source\stb_image.h" />
