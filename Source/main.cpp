@@ -380,11 +380,11 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 
 	// hint sounds
-	if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 	{
 		// insert checking for which version of the puzzle so we can play corresponding hint sound
 		// instead of having 4 different hint buttons
-		engine->play2D("../Assets/Sound/lozhint.wav", false);
+		engine->play2D("../Assets/Sound/ffxivhint.wav", false);
 	}
 
 }
