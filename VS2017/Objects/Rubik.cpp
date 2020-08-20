@@ -46,13 +46,11 @@ void Rubik::setup() {
 	baseTest = cubies[1][1][0];
 }
 
-void Rubik::translateX(int k)
+void Rubik::translateX(int k, float angularSpeed, float dt)
 {
-	glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(2.0f), glm::vec3(0.0f, 0.0f, 0.1f)); //glm::radians(90.0f)
-	
-	modelMatrix = t * modelMatrix;
+	glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(angularSpeed * dt), glm::vec3(0.0f, 0.0f, 0.1f));
 
-	//TO FIX: make it move starting from the middle cube instead...
+	modelMatrix = t * modelMatrix;
 
 	for (int i = 0; i < DIM; i++) {
 		for (int j = 0; j < DIM; j++) {
@@ -62,9 +60,9 @@ void Rubik::translateX(int k)
 }
 
 
-void Rubik::translateY(int k)
+void Rubik::translateY(int k, float angularSpeed, float dt)
 {
-	glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(2.0f), glm::vec3(0.0f, 0.1f, 0.0f));
+	glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(angularSpeed * dt), glm::vec3(0.0f, 0.1f, 0.0f));
 
 	modelMatrix = t * modelMatrix;
 
@@ -75,9 +73,9 @@ void Rubik::translateY(int k)
 	}
 }
 
-void Rubik::translateZ(int k)
+void Rubik::translateZ(int k, float angularSpeed, float dt)
 {
-	glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(2.0f), glm::vec3(0.1f, 0.0f, 0.0f));
+	glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(angularSpeed * dt), glm::vec3(0.1f, 0.0f, 0.0f));
 
 	modelMatrix = t * modelMatrix;
 
@@ -175,7 +173,6 @@ void Rubik::draw(Shader* shaderProgram, const bool isTexture) {
 			}
 		}
 	}
-	
 }
 
 
@@ -184,7 +181,89 @@ void Rubik::create() {
 	//textureId = loadTexture(filename); -> for texture
 }
 
+/*
+	All transfer functions have not been tested
+	should be executed once the animation is complete 
+*/
+void Rubik::transferX(int k) {
+
+	Cubie temp;
+	Cubie temp2;
+
+	//swap all the cubies to their new indices (CCW)
+	//corners
+	temp = cubies[k][0][2];
+	cubies[k][0][2] = cubies[k][0][0];
+	temp2 = cubies[k][2][2];
+	cubies[k][2][2] = temp;
+	temp = cubies[k][2][0];
+	cubies[k][2][0] = temp2;
+	cubies[k][0][0] = temp;
+
+	//sides
+	temp = cubies[k][0][1];
+	cubies[k][0][1] = cubies[k][1][0];
+	temp2 = cubies[k][1][2];
+	cubies[k][1][2] = temp;
+	temp = cubies[k][2][1];
+	cubies[k][2][1] = temp2;
+	cubies[k][1][0] = temp;
+
+}
+
+void Rubik::transferY(int k) {
+
+	Cubie temp;
+	Cubie temp2;
+
+	//swap all the cubies to their new indices (CCW)
+	//corners
+	temp = cubies[2][k][2];
+	cubies[2][k][2] = cubies[2][k][0];
+	temp2 = cubies[0][k][2];
+	cubies[0][k][2] = temp;
+	temp = cubies[0][k][0];
+	cubies[0][k][0] = temp2;
+	cubies[2][k][0] = temp;
+
+	//sides
+	temp = cubies[1][k][2];
+	cubies[1][k][2] = cubies[2][k][1];
+	temp2 = cubies[0][k][1];
+	cubies[0][k][1] = temp;
+	temp = cubies[1][k][0];
+	cubies[1][k][0] = temp2;
+	cubies[2][k][1] = temp;
+
+}
+
+void Rubik::transferZ(int k) {
+
+	Cubie temp;
+	Cubie temp2;
+
+	//swap all the cubies to their new indices (CCW)
+	//corners
+	temp = cubies[0][0][k];
+	cubies[0][0][k] = cubies[2][0][k];
+	temp2 = cubies[0][2][k];
+	cubies[0][2][k] = temp;
+	temp = cubies[2][2][k];
+	cubies[2][2][k] = temp2;
+	cubies[2][0][k] = temp;
+
+	//sides
+	temp = cubies[1][0][k];
+	cubies[1][0][k] = cubies[2][1][k];
+	temp2 = cubies[0][1][k];
+	cubies[0][1][k] = temp;
+	temp = cubies[1][2][k];
+	cubies[1][2][k] = temp2;
+	cubies[2][1][k] = temp;
+
+}
+
 
 Rubik::~Rubik() {
-	
+
 }

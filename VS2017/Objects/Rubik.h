@@ -13,9 +13,18 @@ public:
 	Rubik();
 	~Rubik();
 	void setup();
-	void translateX(int k);
-	void translateY(int k);
-	void translateZ(int k);
+	float angle = 0.0f;
+
+	//operations
+	void translateX(int k, float angularSpeed, float dt);
+	void translateY(int k, float angularSpeed, float dt);
+	void translateZ(int k, float angularSpeed, float dt);
+
+	//transfer cubies in array
+	void transferX(int k);
+	void transferY(int k);
+	void transferZ(int k);
+
 	mat4 getModelMatrix();
 	void draw(Shader* shaderProgram, const bool isTexture);
 	/*void updateModelMatrix();
