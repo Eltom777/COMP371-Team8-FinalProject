@@ -45,9 +45,9 @@ bool isTexture = false;
 bool isLighting = true;
 bool isMusic = true;
 
-//animation 
+// Animation 
 int command = -1;
-float angle = 0.0f;
+float animationAngle = 0.0f;
 float angularSpeed = 180.0f;
 float dt;
 float PI = 3.141593;
@@ -562,44 +562,44 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 }
 
 void operation() {
-	if (angle < 90.0f)
+	if (animationAngle < 90.0f)
 	{
 		switch (command)
 		{
 		case 1: rubik->translateX(0, angularSpeed, dt);
-				angle += angularSpeed * dt;
+				animationAngle += angularSpeed * dt;
 				break;
 
 		case 2: rubik->translateX(1, angularSpeed, dt);
-				angle += angularSpeed * dt;
+				animationAngle += angularSpeed * dt;
 				break;
 
 		case 3: rubik->translateX(2, angularSpeed, dt);
-				angle += angularSpeed * dt;
+				animationAngle += angularSpeed * dt;
 				break;
 
 		case 4: rubik->translateY(0, angularSpeed, dt);
-				angle += angularSpeed * dt;
+				animationAngle += angularSpeed * dt;
 				break;
 
 		case 5: rubik->translateY(1, angularSpeed, dt);
-				angle += angularSpeed * dt;
+				animationAngle += angularSpeed * dt;
 				break;
 
 		case 6: rubik->translateY(2, angularSpeed, dt);
-				angle += angularSpeed * dt;
+				animationAngle += angularSpeed * dt;
 				break;
 
 		case 7: rubik->translateZ(0, angularSpeed, dt);
-				angle += angularSpeed * dt;
+				animationAngle += angularSpeed * dt;
 				break;
 
 		case 8: rubik->translateZ(1, angularSpeed, dt);
-				angle += angularSpeed * dt;
+				animationAngle += angularSpeed * dt;
 				break;
 
 		case 9: rubik->translateZ(2, angularSpeed, dt);
-				angle += angularSpeed * dt;
+				animationAngle += angularSpeed * dt;
 				break;
 		}
 	}
@@ -635,6 +635,6 @@ void operation() {
 		}
 
 		command = -1;
-		angle = 0.0f;
+		animationAngle = 0.0f;
 	}
 }
