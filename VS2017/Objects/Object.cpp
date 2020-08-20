@@ -40,7 +40,7 @@ GLuint Object::loadTexture(const char* filename) {
 	return textureId;
 }
 
-//loads a cubemap texture from 6 individual texture faces
+// Loads a cubemap texture from 6 individual texture faces
  //order:
  //+X (right)
  //-X (left)

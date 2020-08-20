@@ -29,6 +29,7 @@ public:
 	mat4 getModelMatrix();
 	void draw(Shader* shaderProgram, const bool isTexture);
 
+	void create(Shader* shaderProgram);
 	void create();
 
 	Cubie cubies [DIM][DIM][DIM];

@@ -94,18 +94,19 @@ void Rubik::draw(Shader* shaderProgram, const bool isTexture) {
 	shaderProgram->setInt("textureType", 0);
 	shaderProgram->setBool("isTexture", true);
 
-	//	/*if (isLetter) {
-	//		glActiveTexture(GL_TEXTURE1);
-	//	}
-	//	else {
-	//		glActiveTexture(GL_TEXTURE2);
-	//	}*/
+	/*if (isLetter) {
+		shaderProgram->setInt("textureType", 0);
+	}
+	else {
+		shaderProgram->setInt("textureType", 2);
+	}*/
 
 	// Disable blending
 	glDisable(GL_BLEND);
 
 	//bind vao
 	glBindVertexArray(cubeVAO);
+
 
 	//draw each cube
 	// k = x, j = y, i = z
@@ -132,9 +133,14 @@ void Rubik::create() {
 		"../Assets/Textures/skybox/front.jpg",
 		"../Assets/Textures/skybox/back.jpg"
 	};
-	textureId = loadCubemap(faces);
+	//textureId = loadCubemap(faces);
+	textures = loadCubemap(faces, NULL);
 }
 
+/*
+	All transfer functions have not been tested
+	should be executed once the animation is complete
+*/
 void Rubik::transferX(int k) {
 
 	Cubie temp;
