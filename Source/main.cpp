@@ -12,6 +12,7 @@
 //
 #include <iostream>
 #include <string>
+// #include <chrono>
 
 #define GLEW_STATIC 1   // This allows linking with Static Library on Windows, without DLL
 #include <GL/glew.h>    // Include GLEW - OpenGL Extension Wrangler
@@ -46,6 +47,8 @@ float PI = 3.141593;
 float time;
 float last = 0.0f;
 
+int shuffleCount = 0;
+
 // Forward declaration of camera and shader program
 Camera* camera_ptr;
 int width = 1024;
@@ -71,6 +74,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 //Function for operation and animation
 void operation();
+void shuffle();
 
 //Rubik's Cube
 Rubik* rubik = new Rubik();
@@ -246,6 +250,11 @@ int main(int argc, char* argv[])
 		if (command == -1) {
 			glfwPollEvents();
 		}
+		else if (shuffleCount > 0) {
+			shuffle();
+			operation;
+			shuffleCount--;
+		} 
 		else {
 			operation();
 		}
@@ -382,6 +391,20 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		command = 9;
 	}
 
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	{
+		shuffleCount = 10;
+		shuffle();
+	}
+}
+
+void shuffle() {
+	// let's go with 9 moves for now
+	const int min = 1;
+	const int max = 9;
+
+	engine->play2D("../Assets/Sound/click.wav", false);
+	command = (rand() % (max + 1 - min)) + min;
 }
 
 void operation() {
