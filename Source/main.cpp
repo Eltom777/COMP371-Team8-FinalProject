@@ -31,7 +31,7 @@
 #include <Camera.h>
 #include <Rubik.h>
 
-//using namespace std;
+#include <../Source/stb_image.h>
 
 // Window settings
 int width = 1024;
@@ -61,6 +61,7 @@ Camera* camera_ptr;
 Shader* textShader;
 Shader* shaderProgram;
 Shader* shadowShader;
+Shader* skyboxShader;
 
 // Lighting
 glm::vec3 lightSourcePosition(0.0f, 3.0f, -1.0f);
@@ -125,7 +126,8 @@ void initialize() {
 
 void setUpProjection(Shader* shaderProgram) {
 	// Set up Perspective View
-	glm::mat4 Projection = glm::perspective(glm::radians(45.0f),  // field of view in degrees
+	//glm::mat4 Projection = glm::perspective(glm::radians(45.0f),  // field of view in degrees
+	glm::mat4 Projection = glm::perspective(glm::radians(camera->fov),  // field of view in degrees
 		(float)width / height,     // aspect ratio
 		0.01f, 100.0f);      // near and far (near > 0)
 
@@ -294,12 +296,13 @@ int main(int argc, char* argv[])
 	}
 
 	// Black background
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
 
 	// Compile and link shaders here ...
 	textShader = new Shader("../Assets/Shaders/text.vs", "../Assets/Shaders/text.fs");
 	shaderProgram = new Shader("../Assets/Shaders/texturedVertexShader.vertexshader", "../Assets/Shaders/texturedFragmentShader.fragmentshader");
 	shadowShader = new Shader("../Assets/Shaders/shadow_vertex.glsl", "../Assets/Shaders/shadow_fragment.glsl");
+	skyboxShader = new Shader("../Assets/Shaders/skybox2.vertexshader", "../Assets/Shaders/skybox2.fragmentshader");
 
 	// Create Camera Object
 	camera_ptr = new Camera(window);
@@ -392,7 +395,7 @@ int main(int argc, char* argv[])
 		else {
 			operation();
 		}
-    
+
 		// Handle inputs
 		camera_ptr->handleKeyboardInputs();
 	}
@@ -619,31 +622,31 @@ void operation() {
 		switch (command)
 		{
 		case 1: rubik->transferX(0);
-				break;
+			break;
 
 		case 2: rubik->transferX(1);
-				break;
+			break;
 
 		case 3: rubik->transferX(2);
-				break;
-				
+			break;
+
 		case 4: rubik->transferY(0);
-				break;
+			break;
 
 		case 5: rubik->transferY(1);
-				break;
+			break;
 
 		case 6: rubik->transferY(2);
-				break;
-				
+			break;
+
 		case 7: rubik->transferZ(0);
-				break;
+			break;
 
 		case 8: rubik->transferZ(1);
-				break;
+			break;
 
 		case 9: rubik->transferZ(2);
-				break;
+			break;
 		}
 
 		command = -1;

@@ -63,7 +63,6 @@ void Rubik::translateX(int k, float angularSpeed, float dt)
 	}
 }
 
-
 void Rubik::translateY(int k, float angularSpeed, float dt)
 {
 	//glm::mat4 t = glm::rotate(glm::mat4(1.0f), glm::radians(angularSpeed * dt), glm::vec3(0.0f, 0.1f, 0.0f));
@@ -140,29 +139,41 @@ void Rubik::draw(Shader* shaderProgram, const bool isTexture) {
 
 	shaderProgram->use();
 
-	if (isLetter) {
+	/*if (isLetter) {
 		shaderProgram->setInt("textureType", 0);
 	}
 	else {
 		shaderProgram->setInt("textureType", 2);
-	}
+	}*/
 
-	if (isTexture) {
+	shaderProgram->setInt("textureType", 0);
+	shaderProgram->setBool("isTexture", true);
+	//if (isTexture) {
 
-		shaderProgram->setBool("isTexture", isTexture);
+	//	//shaderProgram->setBool("isTexture", isTexture);
 
-		if (isLetter) {
-			glActiveTexture(GL_TEXTURE1);
-		}
-		else {
-			glActiveTexture(GL_TEXTURE2);
-		}
+	//	/*if (isLetter) {
+	//		glActiveTexture(GL_TEXTURE1);
+	//	}
+	//	else {
+	//		glActiveTexture(GL_TEXTURE2);
+	//	}*/
 
-		//bind texture
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, textureId);
-		//glUniform1i(shaderProgram->getLocation("textureSampler"), 0);
-	}
+	//	//bind texture
+	//	//glActiveTexture(GL_TEXTURE0);
+	//	//glBindTexture(GL_TEXTURE_2D, textureId);
+	//	
+	//	//glUniform1i(shaderProgram->getLocation("textureSampler"), 0);
+
+	//	/*for (int l = 0; l < 6; l++)
+	//	{
+	//		glActiveTexture(GL_TEXTURE0);
+	//		glBindTexture(GL_TEXTURE_2D, textures[0]);
+	//	}*/
+	//}
+
+	/*glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textures[3]);*/
 
 	// Disable blending
 	glDisable(GL_BLEND);
@@ -170,13 +181,27 @@ void Rubik::draw(Shader* shaderProgram, const bool isTexture) {
 	//bind vao
 	glBindVertexArray(cubeVAO);
 
+
 	//draw each cube
 	// k = x, j = y, i = z
 	for (int i = 0; i < DIM; i++) {
 		for (int j = 0; j < DIM; j++) {
 			for (int k = 0; k < DIM; k++) {
 				shaderProgram->setMat4("worldMatrix", cubies[i][j][k].getModelMatrix());
-				glDrawArrays(GL_TRIANGLES, 0, 36);
+				//for (int l = 0; l < textures.size(); l++)
+				//{
+					//shaderProgram->setInt("textureIndex", 1);
+					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, textures[4]);
+					glDrawArrays(GL_TRIANGLES, 0, 36);
+
+					//here we could call draw() in Cubie.cpp and change each face textures there
+					//once i figure out how to load textures :))))))))))))))))))
+					//OR i can use i/j/k maybe ??
+
+				//}
+				//glDrawArrays(GL_TRIANGLES, 0, 36); 
+				//glDrawArrays(GL_TRIANGLES, 0, 6); for textures somehow ?
 			}
 		}
 	}
@@ -196,12 +221,13 @@ void Rubik::create() {
 		"../Assets/Textures/skybox/front.jpg",
 		"../Assets/Textures/skybox/back.jpg"
 	};
-	textureId = loadCubemap(faces);
+	//textureId = loadCubemap(faces);
+	textures = loadCubemap(faces, NULL);
 }
 
 /*
 	All transfer functions have not been tested
-	should be executed once the animation is complete 
+	should be executed once the animation is complete
 */
 void Rubik::transferX(int k) {
 
