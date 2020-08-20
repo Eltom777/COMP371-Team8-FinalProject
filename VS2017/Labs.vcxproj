@@ -46,7 +46,7 @@
     <OutDir>$(SolutionDir)/../Bin/</OutDir>
     <IntDir>$(SolutionDir)/../Build/$(Configuration)/</IntDir>
     <TargetName>$(ProjectName)-$(Configuration)</TargetName>
-    <IncludePath>$(IncludePath)</IncludePath>
+    <IncludePath>..\ThirdParty\freeglut\include;..\ThirdParty\freeglut\lib;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -61,13 +61,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../ThirdParty/glew-2.1.0/include;../ThirdParty/FreeImage-3170/Source;../ThirdParty/glfw-3.3/include;../ThirdParty/glm;../VS2017;../VS2017/Shaders;../VS2017/Objects;../VS2017/Objects/Letters;../VS2017/Objects/Numbers;../VS2017/Objects/Students;../VS2017/ThirdParty/;../VS2017/ThirdParty/drawtext.h;../ThirdParty/irrKlang/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../ThirdParty/glew-2.1.0/include;../ThirdParty/FreeImage-3170/Source;../ThirdParty/glfw-3.3/include;../ThirdParty/glm;..\ThirdParty\freetype\include;../VS2017;../VS2017;../VS2017/Shaders;../VS2017/Objects;../VS2017/Objects/Letters;../VS2017/Objects/Numbers;../VS2017/Objects/Students;../VS2017/ThirdParty/;../VS2017/ThirdParty/drawtext.h;../ThirdParty/irrKlang/include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../ThirdParty/irrKlang/lib;../ThirdParty/FreeImage-3170/lib/win32;../ThirdParty/glew-2.1.0/lib/win32;../ThirdParty/glfw-3.3/lib/win32/lib-vc2017</AdditionalLibraryDirectories>
-      <AdditionalDependencies>irrKlang.lib;FreeImage.lib;opengl32.lib;glew32s.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../ThirdParty/irrKlang/lib;../ThirdParty/FreeImage-3170/lib/win32;../ThirdParty/glew-2.1.0/lib/win32;../ThirdParty/glfw-3.3/lib/win32/lib-vc2017;..\ThirdParty\freetype\win32</AdditionalLibraryDirectories>
+      <AdditionalDependencies>irrKlang.lib;FreeImage.lib;opengl32.lib;glew32s.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <BuildLog>
       <Path>
@@ -110,6 +110,8 @@
     <None Include="..\Assets\Shaders\PathLines.vertexshader" />
     <None Include="..\Assets\Shaders\SolidColor.fragmentshader" />
     <None Include="..\Assets\Shaders\SolidColor.vertexshader" />
+    <None Include="..\Assets\Shaders\text.fs" />
+    <None Include="..\Assets\Shaders\text.vs" />
     <None Include="..\Assets\Shaders\Texture.fragmentshader" />
     <None Include="..\Assets\Shaders\Texture.vertexshader" />
     <None Include="..\Assets\Shaders\texturedFragmentShader.fragmentshader" />
