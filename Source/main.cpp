@@ -476,7 +476,7 @@ int main(int argc, char* argv[])
 		glDepthFunc(GL_LESS); // set depth function back to default
 
 		shaderProgram->use();
-
+		
 		// End frame
 		glfwSwapBuffers(window);
 
