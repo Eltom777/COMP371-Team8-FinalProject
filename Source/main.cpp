@@ -31,7 +31,7 @@
 #include <Camera.h>
 #include <Rubik.h>
 
-using namespace std;
+//using namespace std;
 
 // Window settings
 int width = 1024;
@@ -56,6 +56,7 @@ float last = 0.0f;
 
 // Forward declaration of camera and shader program
 Camera* camera_ptr;
+Shader* textShader;
 Shader* shaderProgram;
 Shader* shadowShader;
 
@@ -134,10 +135,11 @@ void setUpProjection(Shader* shaderProgram, Camera* camera) {
 	shaderProgram->setMat4("projectionMatrix", Projection);
 }
 
-void setUpProjectionText(Shader shader) {
+void setUpProjectionText(Shader* textShader) {
 	glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
-	shader.use();
-	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+	textShader->use();
+	textShader->setMat4("projection", projection);
+	//glUniformMatrix4fv(glGetUniformLocation(shader->ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 }
 
 void setUpCamera(Camera* camera, Shader* shaderProgram) {
@@ -253,11 +255,13 @@ int configureFreeType() {
 /*
 Taken from: https://learnopengl.com/code_viewer_gh.php?code=src/7.in_practice/2.text_rendering/text_rendering.cpp
 */
-void RenderText(Shader& shader, std::string text, float x, float y, float scale, glm::vec3 color)
+void RenderText(Shader* textShader, std::string text, float x, float y, float scale, glm::vec3 color)
 {
 	// activate corresponding render state	
-	shader.use();
-	glUniform3f(glGetUniformLocation(shader.ID, "textColor"), color.x, color.y, color.z);
+	//shader.use();
+	textShader->use();
+	textShader->setVec3("textColor", glm::vec3(color.x, color.y, color.z));
+	//glUniform3f(glGetUniformLocation(shader.ID, "textColor"), color.x, color.y, color.z);
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(VAO);
 
@@ -301,9 +305,9 @@ void RenderText(Shader& shader, std::string text, float x, float y, float scale,
 /*
 Render the time elapsed
 */
-void displayTime(Shader shader) {
-	string timeString = to_string(timeElapsed - timeSinceReset);
-	RenderText(shader, "Seconds elapsed: " + timeString, 750.0f, 700.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
+void displayTime(Shader* textShader) {
+	std::string timeString = std::to_string(timeElapsed - timeSinceReset);
+	RenderText(textShader, "Seconds elapsed: " + timeString, 750.0f, 700.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
 }
 
 /*
@@ -345,7 +349,7 @@ int main(int argc, char* argv[])
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Compile and link shaders here ...
-	Shader shader("../Assets/Shaders/text.vs", "../Assets/Shaders/text.fs");
+	textShader = new Shader("../Assets/Shaders/text.vs", "../Assets/Shaders/text.fs");
 	shaderProgram = new Shader("../Assets/Shaders/texturedVertexShader.vertexshader", "../Assets/Shaders/texturedFragmentShader.fragmentshader");
 	shadowShader = new Shader("../Assets/Shaders/shadow_vertex.glsl", "../Assets/Shaders/shadow_fragment.glsl");
 
@@ -353,7 +357,7 @@ int main(int argc, char* argv[])
 	camera_ptr = new Camera(window);
 
 	// Set View and Projection matrices on both shaders
-	setUpProjectionText(shader);
+	setUpProjectionText(textShader);
 
 	// Load Texture and VAO for Models
 	rubik->create();
@@ -407,7 +411,7 @@ int main(int argc, char* argv[])
 		if (!solved) {
 			timeElapsed = glfwGetTime(); // update time if the puzzle has not yet been solved
 		}
-		displayTime(shader);
+		displayTime(textShader);
 
 		// Disable after rendering text
 		glDisable(GL_CULL_FACE);
@@ -415,6 +419,10 @@ int main(int argc, char* argv[])
 
 		// Enable z-buffer
 		glEnable(GL_DEPTH_TEST);
+
+		time = glfwGetTime();
+		dt = time - last;
+		last = time;
 
 		// Draw Rubik's Cube models
 		rubik->draw(shaderProgram, isTexture);
@@ -500,15 +508,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	// Reset button
 	if (key == GLFW_KEY_R && action == GLFW_PRESS)
 	{
+		shaderProgram->use();
 		rubik->~Rubik();
 		rubik = new Rubik();
-    timeSinceReset = glfwGetTime();
+		rubik->create();
+		timeSinceReset = glfwGetTime();
 		solved = false;
 	}
 
-	//DOESN'T WORK BECAUSE IF YOU MOVE X, THEN THE POSITIONS ARE MESSED UP WHEN MOVING Y OR Z
-	//MAYBE MAKE AN ARRAY OR A LINKED LIST THAT'S UPDATED EVERYTIME YOU DO A MOVE
-	//AND WHEN YOU PRESS 1, INSTEAD OF GOING THROUGH A NESTED LOOP, IT GOES THROUGH THE ARRAY
 	//handle x
 	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
 	{
