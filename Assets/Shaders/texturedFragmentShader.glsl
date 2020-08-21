@@ -8,7 +8,10 @@ in vec2 vertexUV;
 flat in int textureType;
 in vec3 Normal;
 in vec3 FragPos;
+in vec4 fragment_position_light_space;
 // in vec3 LightPos; // view-space
+
+uniform sampler2D shadow_map;
 
 uniform bool isTexture;
 uniform vec3 lightPos;
@@ -19,6 +22,22 @@ uniform vec3 objectColor;
 uniform sampler2D textureSampler;
         
 out vec4 FragColor;
+
+float shadow_scalar() {
+    // this function returns 1.0 when the surface receives light, and 0.0 when it is in a shadow
+    // perform perspective divide
+    vec3 ndc = fragment_position_light_space.xyz / fragment_position_light_space.w;
+    // transform to [0,1] range
+    ndc = ndc * 0.5 + 0.5;
+    // get closest depth value from light's perspective (using [0,1] range fragment_position_light_space as coords)
+    float closest_depth = texture(shadow_map, ndc.xy).r;
+    // get depth of current fragment from light's perspective
+    float current_depth = ndc.z;
+    // check whether current frag pos is in shadow
+    float bias = 0;  // bias applied in depth map: see shadow_vertex.glsl
+    return ((current_depth - bias) > closest_depth) ? 1.0 : 0.0;
+}
+
 void main()
 {
     float materialShininess;
@@ -37,9 +56,9 @@ void main()
             break;
         case 1:
             materialAmbient = vec3(0.15f, 0.15f, 0.15f);
-            materialDiffuse = vec3(0.6f, 0.6f, 0.6f);
-            materialSpecular = vec3(0.8f, 0.8f, 0.8f);
-            materialShininess = 128.0f;;
+            materialDiffuse = vec3(0.06f, 0.06f, 0.06f);
+            materialSpecular = vec3(1.8f, 1.8f, 1.8f);
+            materialShininess = 2.0f;
             break;
         case 2:
             materialAmbient = vec3(0.25f, 0.25f, 0.25f);
@@ -49,9 +68,9 @@ void main()
             break;
         default:
             materialAmbient = vec3(0.25f, 0.25f, 0.25f);
-            materialDiffuse = vec3(0.4f, 0.4f, 0.4f);
+            materialDiffuse = vec3(0.04f, 0.04f, 0.04f);
             materialSpecular = vec3(0.7f, 0.7f, 0.7f);
-            materialShininess = 32.0f;;
+            materialShininess = 2.0f;;
             break;
     }
 
@@ -64,31 +83,57 @@ void main()
         textureColor = vec4(vertexColor.r, vertexColor.g, vertexColor.b, 1.0);
     }
 
-    // vec4 textureColor = texture( textureSampler, vertexUV );
+    // Shadow Calculation
+    float shadowScalar = shadow_scalar();
+    //float shadowScalar = 1.0f;
 
     // ambient
-	float ambientStrength = 6.0;
+	float ambientStrength = 1.0f;
 	vec3 ambient = ambientStrength * (materialAmbient * lightColor);
 
     // diffuse
 	vec3 norm = normalize(Normal);
-	// vec3 lightDir = normalize(LightPos - FragPos); // view-space
     vec3 lightDir = normalize(lightPos - FragPos); // world space
-    // vec3 lightDir = normalize(lightPos - (0, 0, 0)); // world space
 
 	float diff = max(dot(norm, lightDir), 0.0);
-	vec3 diffuse = diff * lightColor * materialDiffuse;
+
+    // Technique in the lab to render lighting and shadow
+	//vec3 diffuse = shadowScalar * diff * lightColor * materialDiffuse;
+    vec3 diffuse = diff * lightColor * materialDiffuse;
+
 
     // specular
 	float specularStrength = 2.0;
     vec3 viewDir = normalize(viewPos - FragPos); // World space
 	// vec3 viewDir = normalize(FragPos); // view-space
 	vec3 reflectDir = reflect(-lightDir, norm);
-	float spec = pow(max(dot(viewDir, reflectDir), 0.0), materialShininess);
-	vec3 specular = specularStrength * (materialSpecular * spec * lightColor);
+    vec3 halfwayDir = normalize(lightDir + viewDir);
 
-    vec4 tempResult = vec4((ambient + diffuse + specular), 1.0);
-    vec4 result = textureColor * tempResult; //tempResult * textureColor; //if you want lighting
+	//float spec = pow(max(dot(viewDir, reflectDir), 0.0), materialShininess);
+    float spec = pow(max(dot(norm, halfwayDir), 0.0), materialShininess);
+    
+    // Technique in the lab to render lighting and shadow
+	//vec3 specular = shadowScalar * specularStrength * (materialSpecular * spec * lightColor);
+    vec3 specular = specularStrength * (materialSpecular * spec * lightColor);
+
+    // Technique in the lab to render lighting and shadow
+    //vec4 tempResult = vec4((ambient + diffuse + specular), 1.0);
+
+    // Return color using a vec3
+    vec3 thiscolor;
+
+    if (isTexture) {
+        kolor = texture(textureSampler, vertexUV).rgb;
+    }
+    else {
+        kolor = vec3(vertexColor.r, vertexColor.g, vertexColor.b);
+    }
+
+    vec3 lighting = (ambient + (1.0 - shadowScalar) * (diffuse + specular)) * thiscolor;
+    vec4 result = vec4(lighting, 1.0);
+
+    // Technique in the lab to render lighting and shadow
+    //vec4 result = textureColor * tempResult; //tempResult * textureColor; //if you want lighting
 
     FragColor =  result;
 };

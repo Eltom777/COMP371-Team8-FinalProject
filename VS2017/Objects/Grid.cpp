@@ -203,8 +203,23 @@ int Grid::createAxisVAO() {
 	return vao;
 }
 
+// Render the depth map
+
+void Grid::drawGridShadow(Shader* shadowShader, GLuint* depth_map_fbo) {
+	shadowShader->use();
+
+
+	glBindVertexArray(textureGridVAO);
+
+	shadowShader->setMat4("model", this->modelMatrix);
+
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+
+	//glBindVertexArray(0);
+}
+
 void Grid::drawGrid(Shader* shaderProgram, bool isTexture, bool isLighting) {
-	std::cout << "GRID is texture " << isTexture << std::endl;
+	//std::cout << "GRID is texture " << isTexture << std::endl;
 
 	shaderProgram->use(); //glUseProgram()
 	//shaderProgram->setBool("isLighting", isLighting);

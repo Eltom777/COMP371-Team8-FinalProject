@@ -133,7 +133,7 @@ void Rubik::translateZ(int k)
 //	modelMatrix = translationMatrix * scalingMatrix * rotationMatrix * modelMatrix;
 //}
 void Rubik::draw(Shader* shaderProgram, const bool isTexture) {
-	std::cout << "RUBIK is texture " << isTexture << std::endl;
+	//std::cout << "RUBIK is texture " << isTexture << std::endl;
 	shaderProgram->setBool("isTexture", false);
 
 	shaderProgram->use();
@@ -177,7 +177,30 @@ void Rubik::draw(Shader* shaderProgram, const bool isTexture) {
 			}
 		}
 	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	
+}
+
+// To render the depth MAP
+
+void Rubik::drawShadow(Shader* shaderShadow, GLuint* depth_map_fbo) {
+	shaderShadow->use();
+
+	glBindVertexArray(cubeVAO);
+
+	//draw each cube
+	// k = x, j = y, i = z
+	for (int i = 0; i < DIM; i++) {
+		for (int j = 0; j < DIM; j++) {
+			for (int k = 0; k < DIM; k++) {
+				shaderShadow->setMat4("model", cubies[i][j][k].getModelMatrix());
+				glDrawArrays(GL_TRIANGLES, 0, 36);
+			}
+		}
+	}
+
+	glBindVertexArray(0);
 }
 
 

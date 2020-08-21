@@ -10,7 +10,7 @@
 // Modified by Team 8 for Assignment 2 due 27/07/2020.
 //
 //
-
+//#include <algorithm>
 #include <iostream>
 #include <string>
 
@@ -21,7 +21,7 @@
 
 #include <glm/glm.hpp>  // GLM is an optimized math library with syntax to similar to OpenGL Shading Language
 #include <glm/gtc/matrix_transform.hpp>
-
+#include <glm/gtx/string_cast.hpp>
 #include <Camera.h>
 #include <Rubik.h>
 #include <Grid.h>
@@ -38,7 +38,7 @@ bool isLighting = true;
 
 //animation 
 int command = -1;
-float angle = 0.0f;
+float thisAngle = 0.0f;
 float dt;
 float PI = 3.141593;
 float time;
@@ -50,6 +50,7 @@ int width = 1024;
 int height = 768;
 Shader* shaderProgram;
 Shader* shadowShader;
+Shader* debugShader;
 
 // Lighting
 glm::vec3 lightSourcePosition(0.0f, 3.0f, -1.0f);
@@ -57,12 +58,19 @@ glm::vec3 ambient(0.3f);
 glm::vec3 diffuse(1.0f);
 glm::vec3 specular(1.0f);
 
+// Shadow Debug
+void renderQuad();
+
 // Grid
 void renderGrid(Shader* shaderProgram, Grid objGrid) {
 	// Draw grid
 	objGrid.drawGrid(shaderProgram, false, true); // 3 vertices, starting at index 0
 }
 
+void renderShadowGrid(Shader* shaderShadow, Grid objGrid, GLuint* depth_map_fbo) {
+	// Draw grid
+	objGrid.drawGridShadow(shaderShadow, depth_map_fbo);
+}
 
 // Random location range
 const float MIN_RAND = -0.5f, MAX_RAND = 0.5f;
@@ -168,11 +176,56 @@ int main(int argc, char* argv[])
 	}
 
 	// Black background
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	
 
 	// Compile and link shaders here ...
 	shaderProgram = new Shader("../Assets/Shaders/texturedVertexShader.glsl", "../Assets/Shaders/texturedFragmentShader.glsl");
-	//shadowShader = new Shader("../Assets/Shaders/shadow_vertex.glsl", "../Assets/Shaders/shadow_fragment.glsl");
+	shadowShader = new Shader("../Assets/Shaders/shadow_vertex.glsl", "../Assets/Shaders/shadow_fragment.glsl");
+	debugShader = new Shader("../Assets/Shaders/debug_vertex.glsl", "../Assets/Shaders/debug_fragment.glsl");
+
+	// Set up for shadows
+	const unsigned int DEPTH_MAP_TEXTURE_SIZE = 1024;
+
+	// Variable storing index to texture used for shadow mapping
+	GLuint depth_map_texture;
+	// Get the texture
+	glGenTextures(1, &depth_map_texture);
+	// Bind the texture so the next glTex calls affect it
+	glBindTexture(GL_TEXTURE_2D, depth_map_texture);
+	// Create the texture and specify it's attributes, including widthn height,
+	// components (only depth is stored, no color information)
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, DEPTH_MAP_TEXTURE_SIZE,
+		DEPTH_MAP_TEXTURE_SIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	// Set texture sampler parameters.
+ // The two calls below tell the texture sampler inside the shader how to
+ // upsample and downsample the texture. Here we choose the nearest filtering
+ // option, which means we just use the value of the closest pixel to the
+ // chosen image coordinate.
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	// The two calls below tell the texture sampler inside the shader how it
+	// should deal with texture coordinates outside of the [0, 1] range. Here we
+	// decide to just tile the image.
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	// Variable storing index to framebuffer used for shadow mapping
+	GLuint depth_map_fbo;  // fbo: framebuffer object
+	// Get the framebuffer
+	glGenFramebuffers(1, &depth_map_fbo);
+	// Bind the framebuffer so the next glFramebuffer calls affect it
+	glBindFramebuffer(GL_FRAMEBUFFER, depth_map_fbo);
+	// Attach the depth map texture to the depth map framebuffer
+	// glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
+	// depth_map_texture, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D,
+		depth_map_texture, 0);
+	glDrawBuffer(GL_NONE);  // disable rendering colors, only write depth values
+	glReadBuffer(GL_NONE);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// End of set up for shadows
+
 
 	// Create Camera Object
 	camera_ptr = new Camera(window);
@@ -184,22 +237,24 @@ int main(int argc, char* argv[])
 	// Set View and Projection matrices on both shaders
 	setUpProjection(shaderProgram, camera_ptr);
 
+	shaderProgram->setInt("shadow_map", 3);
 
 	//Load Texture and VAO for Models
 	rubik->create();
 
 	//double time = glfwGetTime();
 	// Entering Main Loop
+	// Enable z-buffer
+	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_CULL_FACE);
+
 	while (!glfwWindowShouldClose(window))
 	{
-		// Enable z-buffer
-		glEnable(GL_DEPTH_TEST);
-
-		// Each frame, reset color of each pixel to glClearColor
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		
 
 		// Set up Perspective View
 		glfwGetWindowSize(window, &width, &height); // if window is resized, get new size to draw perspective view correctly
+		shaderProgram->use();
 		setUpProjection(shaderProgram, camera_ptr);
 		//setUpProjection(shaderPrograms[1], camera_ptr);
 		
@@ -207,18 +262,48 @@ int main(int argc, char* argv[])
 		dt = time - last;
 		last = time;
 
-		// Draw floor
-		renderGrid(shaderProgram, objGrid);
+		// Shadows
+		float lightNearPlane = 1.0f;
+		float lightFarPlane = 12.5f;
 
-		// Draw Rubik's Cube models
-		rubik->draw(shaderProgram, isTexture);
+		mat4 lightProjMatrix = /*frustum(-1.0f, 1.0f, -1.0f, 1.0f, lightNearPlane, lightFarPlane);*/
+			//perspective(1.0f, (float)DEPTH_MAP_TEXTURE_SIZE / (float)DEPTH_MAP_TEXTURE_SIZE, lightNearPlane, lightFarPlane);
+			glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, lightNearPlane, lightFarPlane);
+
+
+		//vec3 lightPos = camera_ptr->cameraPos;
+		//vec3 lightPos = vec3(0.5f, 3.0f, 0.5);
+		vec3 lightPos = vec3(0.01f, 4.0f, 2.01f);
+
+
+
+		vec3 lightFocus(0.0f, 0.0f, 0.0f);  // the point in 3D space the light "looks" at
+		vec3 lightDirection = normalize(lightFocus - lightPos);
+		mat4 lightViewMatrix = lookAt(lightPos, lightFocus, vec3(0.0f, 1.0f, 0.0f));
+
+		mat4 debug = lightProjMatrix * lightViewMatrix;
+
+		// I suspect that the lightProjMatrix might be problematic
+		std::cout << " light PROJ Matrix " << glm::to_string(lightProjMatrix) << std::endl;
+		std::cout << " light VIEW Matrix " << glm::to_string(lightViewMatrix) << std::endl;
+		
+
+		shaderProgram->use();
+		shaderProgram->setMat4("light_proj_view_matrix", lightProjMatrix * lightViewMatrix);
+
+		std::cout << " LIGHT PROJ XXX VIEW MATRIX " << glm::to_string(debug) << std::endl;
+		
 
 		// Important: setting worldmatrix back to normal so other stuff doesn't get scaled down
 		shaderProgram->setMat4("worldMatrix", mat4(1.0f));
-		shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
+		shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f)); // redundant
 		shaderProgram->setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-		shaderProgram->setVec3("lightPos", camera_ptr->cameraPos);
+		shaderProgram->setVec3("lightPos", lightPos);
 		shaderProgram->setVec3("viewPos", camera_ptr->cameraPos);
+
+		// value for shadowShader
+		shadowShader->use();
+		shadowShader->setMat4("proj_x_view", lightProjMatrix * lightViewMatrix);
 
 		// Model Render Mode
 		renderMode(window);
@@ -227,13 +312,61 @@ int main(int argc, char* argv[])
 		camera_ptr->handleFrameData();
 
 		//refresh specular
+		shaderProgram->use();
 		shaderProgram->setVec3("viewPos", camera_ptr->cameraPos);
 
 		// Set up Camera
 		if (currentModel == -1) {
 			setUpCamera(camera_ptr, shaderProgram);
-			//setUpCamera(camera_ptr, shaderPrograms[1]);
 		}
+
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// 1st pass -> Shadow render
+		shadowShader->use();
+		glViewport(0, 0, DEPTH_MAP_TEXTURE_SIZE, DEPTH_MAP_TEXTURE_SIZE);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, depth_map_fbo);
+
+
+		renderShadowGrid(shadowShader, objGrid, &depth_map_fbo);
+
+		rubik->drawShadow(shadowShader, &depth_map_fbo);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		// TO TRY AND RENDER THE DEPTH MAP ITSELF
+		// render Depth map to quad for visual debugging
+	   // ---------------------------------------------
+		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		//glViewport(0, 0, 1024, 1024);
+		//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		//debugShader->use();
+		////debugShader->setFloat("near_plane", lightNearPlane);
+		////debugShader->setFloat("far_plane", lightFarPlane);
+		//glActiveTexture(GL_TEXTURE0);
+		//glBindTexture(GL_TEXTURE_2D, depth_map_texture);
+		//renderQuad();
+
+		// 2nd pass -> Regular render
+		int width, height;
+		glfwGetFramebufferSize(window, &width, &height);
+		glViewport(0, 0, width, height);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		shaderProgram->use();
+
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, depth_map_texture);
+		
+		// Draw floor
+		renderGrid(shaderProgram, objGrid);
+
+		// Draw Rubik's Cube models
+		rubik->draw(shaderProgram, isTexture);
 
 
 		// End frame
@@ -258,6 +391,36 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
+
+// To render the shadow depth map
+unsigned int quadVAO = 0;
+unsigned int quadVBO;
+void renderQuad()
+{
+	if (quadVAO == 0)
+	{
+		float quadVertices[] = {
+			// positions        // texture Coords
+			-5.0f,  5.0f, 0.0f, 0.0f, 1.0f,
+			-5.0f, -5.0f, 0.0f, 0.0f, 0.0f,
+			 5.0f,  5.0f, 0.0f, 1.0f, 1.0f,
+			 5.0f, -5.0f, 0.0f, 1.0f, 0.0f,
+		};
+		// setup plane VAO
+		glGenVertexArrays(1, &quadVAO);
+		glGenBuffers(1, &quadVBO);
+		glBindVertexArray(quadVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	}
+	glBindVertexArray(quadVAO);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glBindVertexArray(0);
+}
 
 /*
 Adaptors based on the interfaces at the top.
@@ -352,21 +515,21 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 }
 
 void operation() {
-	if (angle <= glm::radians(90.0f)) {
+	if (thisAngle <= glm::radians(90.0f)) {
 		//angle should be controlled to land at 90.0f, right now its continously increased until it reaches 90.0f
-		angle = (angle + PI/16 * dt);
+		thisAngle = (thisAngle + PI/16 * dt);
 		if (command == 1) {
-			rubik->translateX(0, angle);
+			rubik->translateX(0, thisAngle);
 		}
 		if (command == 2) {
-			rubik->translateX(1, angle);
+			rubik->translateX(1, thisAngle);
 		}
 		if (command == 3) {
-			rubik->translateX(2, angle);
+			rubik->translateX(2, thisAngle);
 		}
 	}
 	else {
 		command = -1;
-		angle = 0.0f;
+		thisAngle = 0.0f;
 	}
 }

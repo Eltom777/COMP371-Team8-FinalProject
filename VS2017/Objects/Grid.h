@@ -13,7 +13,7 @@ static const float AXISLENGTH = static_cast<float>(10) / static_cast <float>(COL
 
 class Grid : public Object {
 
-	const char* filename = "../Assets/Textures/brick.jpg";
+	const char* filename = "../Assets/Textures/Metal.jpg";
 
 	//Lighting properties
 	const vec3 ambient = vec3(0.05f, 0.15f, 0.05f);	 //	 vec3(0.05f, 0.15f, 0.05f)
@@ -44,6 +44,7 @@ public:
 	int getNumberOfColumns();
 	int createtextureGridVAO();
 	void drawGrid(Shader* shaderProgram, bool isTexture, bool isLighting);
+	void Grid::drawGridShadow(Shader* shadowShader, GLuint* depth_map_fbo);
 	void drawAxis(Shader* shaderProgram);
 private:
 	static const vec3 axis[];

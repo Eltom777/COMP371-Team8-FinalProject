@@ -114,6 +114,10 @@
     <None Include="..\Assets\Shaders\Texture.vertexshader" />
     <None Include="..\Assets\Shaders\texturedFragmentShader.glsl" />
     <None Include="..\Assets\Shaders\texturedVertexShader.glsl" />
+    <None Include="debug_fragment.glsl" />
+    <None Include="debug_vertex.glsl" />
+    <None Include="shadow_fragment.glsl" />
+    <None Include="shadow_vertex.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\Assets\Textures\BillboardTest.bmp" />
