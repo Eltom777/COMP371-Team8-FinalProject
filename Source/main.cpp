@@ -1,3 +1,4 @@
+
 //
 // Uses the COMP 371 Assignment Framework
 //
@@ -17,7 +18,7 @@
 #define GLEW_STATIC 1   // This allows linking with Static Library on Windows, without DLL
 #include <GL/glew.h>    // Include GLEW - OpenGL Extension Wrangler
 #include <GLFW/glfw3.h> // GLFW provides a cross-platform interface for creating a graphical context,
-						// initializing OpenGL and binding inputs
+// initializing OpenGL and binding inputs
 
 #include <irrKlang.h>	// irrKlang is a sound engine to play WAV, MP3, OGG, FLAC, MOD, XM, IT, S3M and more file formats
 
@@ -37,8 +38,8 @@
 int width = 1024;
 int height = 768;
 
-// Which model we are currently looking at (0, 1, 2, 3, 4), if -1, then we are not looking at any models
-static int currentModel = -1;
+// Which Rubik's cube we are currently playing (1, 2, 3, 4)
+static int currentCube = 1;
 
 // Textures not enabled yet
 bool isTexture = false;
@@ -62,6 +63,10 @@ Shader* textShader;
 Shader* shaderProgram;
 Shader* shadowShader;
 Shader* skyboxShader;
+
+// Forward declaration of camera and projection matrices
+glm::mat4 projection;
+glm::mat4 view;
 
 // Lighting
 glm::vec3 lightSourcePosition(0.0f, 3.0f, -1.0f);
@@ -87,6 +92,10 @@ struct Character {
 std::map<GLchar, Character> Characters;
 unsigned int VAO, VBO;
 
+// Skybox properties
+GLuint skyboxTexture;
+unsigned int skyboxVAO, skyboxVBO;
+
 // Function interfaces for camera response to mouse input
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xOffset, double yOffset);
@@ -104,6 +113,47 @@ void displayTime(Shader* textShader);
 // Rubik's Cube
 Rubik* rubik = new Rubik();
 bool solved = false;
+
+// Rubik's textures
+vector<std::string> pokemonFaces
+{
+	"../Assets/Textures/pokemon/rOWlet.jpg",    //back
+	"../Assets/Textures/pokemon/sha.jpg",       //front
+	"../Assets/Textures/pokemon/pikchu.jpg",    //left
+	"../Assets/Textures/pokemon/ditto.jpg",     //right
+	"../Assets/Textures/pokemon/halloween.jpg", //botton
+	"../Assets/Textures/pokemon/pokeball.jpg"   //top
+};
+
+vector<std::string> zeldaFaces
+{
+	"../Assets/Textures/zelda/zelda.jpg",
+	"../Assets/Textures/zelda/triforce.jpg",
+	"../Assets/Textures/zelda/hilda.jpg",
+	"../Assets/Textures/zelda/link.jpg",
+	"../Assets/Textures/zelda/wink.jpg",
+	"../Assets/Textures/zelda/underwater.jpg"
+};
+
+vector<std::string> disneyFaces
+{
+	"../Assets/Textures/disney/ariel.jpg",
+	"../Assets/Textures/disney/cinderella.jpg",
+	"../Assets/Textures/disney/mickey.jpg",
+	"../Assets/Textures/disney/nala.jpg",
+	"../Assets/Textures/disney/stitch.jpg",
+	"../Assets/Textures/disney/huh.jpg"
+};
+
+vector<std::string> finalfantasyFaces
+{
+	"../Assets/Textures/FFXIV/FFXIV1.jpg",
+	"../Assets/Textures/FFXIV/FFXIV2.jpg",
+	"../Assets/Textures/FFXIV/FFXIV3.jpg",
+	"../Assets/Textures/FFXIV/FFXIV4.jpg",
+	"../Assets/Textures/FFXIV/FFXIV5.jpg",
+	"../Assets/Textures/FFXIV/FFXIV6.jpg"
+};
 
 // Initialize sound Engine; start the sound engine with default parameters
 irrklang::ISoundEngine* engine = irrklang::createIrrKlangDevice();
@@ -127,20 +177,19 @@ void initialize() {
 glm::mat4 setUpProjection(Shader* shaderProgram, Camera* camera) {
 	// Set up Perspective View
 	//glm::mat4 Projection = glm::perspective(glm::radians(45.0f),  // field of view in degrees
-	glm::mat4 Projection = glm::perspective(glm::radians(camera->fov),  // field of view in degrees
+	glm::mat4 projection = glm::perspective(glm::radians(camera->fov),  // field of view in degrees
 		(float)width / height,     // aspect ratio
 		0.01f, 100.0f);      // near and far (near > 0)
 
-	shaderProgram->setMat4("projectionMatrix", Projection);
+	shaderProgram->setMat4("projectionMatrix", projection);
 
-	return Projection;
+	return projection;
 }
 
 void setUpProjectionText(Shader* textShader) {
 	glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
 	textShader->use();
 	textShader->setMat4("projection", projection);
-	//glUniformMatrix4fv(glGetUniformLocation(shader->ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 }
 
 /*
@@ -245,6 +294,90 @@ int configureFreeType() {
 	glBindVertexArray(0);
 }
 
+void setUpSkybox() {
+	// TODO: if we have time, we can clean it up to its own class
+	float skyboxVertices[] = {
+		// positions          
+		-1.0f,  1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
+		1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		-1.0f,  1.0f, -1.0f,
+		1.0f,  1.0f, -1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		1.0f, -1.0f,  1.0f
+	};
+
+	glGenVertexArrays(1, &skyboxVAO);
+	glGenBuffers(1, &skyboxVBO);
+	glBindVertexArray(skyboxVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+	vector<std::string> faces
+	{
+		"../Assets/Textures/skybox/right.jpg",
+		"../Assets/Textures/skybox/left.jpg",
+		"../Assets/Textures/skybox/top.jpg",
+		"../Assets/Textures/skybox/bottom.jpg",
+		"../Assets/Textures/skybox/front.jpg",
+		"../Assets/Textures/skybox/back.jpg"
+	};
+	Object obj;
+	skyboxTexture = obj.loadCubemap(faces);
+
+	skyboxShader->use();
+	skyboxShader->setInt("skybox", 0);
+}
+
+void drawSkybox() {
+	skyboxShader->use();
+	view = glm::mat4(glm::mat3(view)); // remove translation from the view matrix
+	skyboxShader->setMat4("view", view);
+	skyboxShader->setMat4("projection", projection);
+
+	glBindVertexArray(skyboxVAO);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexture);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+}
+
 glm::mat4 setUpCamera(Camera* camera, Shader* shaderProgram) {
 	glm::mat4 viewMatrix = glm::lookAt(camera->cameraPos, // position
 		camera->cameraDirection, // front -- camera.cameraPos + camera.cameraFront
@@ -302,95 +435,25 @@ int main(int argc, char* argv[])
 	// Create Camera Object
 	camera_ptr = new Camera(window);
 
-	// Set View and Projection matrices on both shaders
+	// Set orthogonal projection matrix for text
 	setUpProjectionText(textShader);
 
-	// Load Texture and VAO for Models
-	setUpProjection(shaderProgram, camera_ptr);
+	// Create Rubik's cube
+	// Different textures
+	
 
-	rubik->create();
+	rubik->create(disneyFaces);
 
 	// Play some sound stream, looped
 	// Music is not null if parameters 'track', 'startPaused' or 'enableSoundEffects' have been set to true.
 	music = engine->play2D("../Assets/Sound/BackingTrack.mp3", true, false, false, irrklang::ESM_AUTO_DETECT, true);
 	music->setVolume(0.3f);
-	
+
 	// Setup FreeType
 	configureFreeType();
 
-	//----------------------------------------------------
-	// Set up Skybox
-	// TODO: if we have time, we can clean it up to its own class
-	float skyboxVertices[] = {
-		// positions          
-		-1.0f,  1.0f, -1.0f,
-		-1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-
-		-1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f,  1.0f,
-		-1.0f, -1.0f,  1.0f,
-
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-
-		-1.0f, -1.0f,  1.0f,
-		-1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f,  1.0f,
-
-		-1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		-1.0f,  1.0f,  1.0f,
-		-1.0f,  1.0f, -1.0f,
-
-		-1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f,  1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f,  1.0f,
-		 1.0f, -1.0f,  1.0f
-	};
-
-	unsigned int skyboxVAO, skyboxVBO;
-	glGenVertexArrays(1, &skyboxVAO);
-	glGenBuffers(1, &skyboxVBO);
-	glBindVertexArray(skyboxVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-	vector<std::string> faces
-	{
-		"../Assets/Textures/skybox/right.jpg",
-		"../Assets/Textures/skybox/left.jpg",
-		"../Assets/Textures/skybox/top.jpg",
-		"../Assets/Textures/skybox/bottom.jpg",
-		"../Assets/Textures/skybox/front.jpg",
-		"../Assets/Textures/skybox/back.jpg"
-	};
-	Object obj;
-	GLuint skyboxTexture = obj.loadCubemap(faces);
-
-	skyboxShader->use();
-	skyboxShader->setInt("skybox", 0);
-	//END of Skybox setup
-	//----------------------------------------------------
+	// Setup skybox
+	setUpSkybox();
 
 	// Entering Main Loop
 	while (!glfwWindowShouldClose(window))
@@ -400,7 +463,7 @@ int main(int argc, char* argv[])
 
 		// Set up Perspective View
 		glfwGetWindowSize(window, &width, &height); // if window is resized, get new size to draw perspective view correctly
-		glm::mat4 projection = setUpProjection(shaderProgram, camera_ptr);
+		projection = setUpProjection(shaderProgram, camera_ptr);
 		//setUpProjection(shaderPrograms[1], camera_ptr);
 
 		// Important: setting worldmatrix back to normal so other stuff doesn't get scaled down
@@ -420,27 +483,15 @@ int main(int argc, char* argv[])
 		shaderProgram->setVec3("viewPos", camera_ptr->cameraPos);
 
 		// Set up Camera
-		glm::mat4 view;
-		if (currentModel == -1) {
-			view = setUpCamera(camera_ptr, shaderProgram);
-			//setUpCamera(camera_ptr, shaderPrograms[1]);
-		}
+		view = setUpCamera(camera_ptr, shaderProgram);
+
+		// Use shader
+		shaderProgram->use();
 
 		// Draw Skybox
 		glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
-		skyboxShader->use();
-		view = glm::mat4(glm::mat3(view)); // remove translation from the view matrix
-        skyboxShader->setMat4("view", view);
-		skyboxShader->setMat4("projection", projection);
-
-		glBindVertexArray(skyboxVAO);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexture);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		glBindVertexArray(0);
+		drawSkybox();
 		glDepthFunc(GL_LESS); // set depth function back to default
-
-		shaderProgram->use();
 
 		// Draw Timer
 		// Enable face culling and blending for text to appear
@@ -468,8 +519,6 @@ int main(int argc, char* argv[])
 		// Draw Rubik's Cube models
 		rubik->draw(shaderProgram, isTexture);
 
-		
-		
 		// End frame
 		glfwSwapBuffers(window);
 
@@ -519,6 +568,25 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) // Mak
 	glViewport(0, 0, width, height); // changed values: supposed to fix pitfall but doesnt seem to work
 }
 
+void resetRubik()
+{
+	shaderProgram->use();
+	rubik->~Rubik();
+	rubik = new Rubik();
+
+	if (currentCube == 1)
+		rubik->create(disneyFaces);
+	else if (currentCube == 2)
+		rubik->create(finalfantasyFaces);
+	else if (currentCube == 3)
+		rubik->create(pokemonFaces);
+	else if (currentCube == 4)
+		rubik->create(zeldaFaces);
+
+	timeSinceReset = glfwGetTime();
+	solved = false;
+}
+
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	if (key == GLFW_KEY_X && action == GLFW_PRESS)
 	{
@@ -555,12 +623,41 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	// Reset button
 	if (key == GLFW_KEY_R && action == GLFW_PRESS)
 	{
-		shaderProgram->use();
-		rubik->~Rubik();
-		rubik = new Rubik();
-		rubik->create();
-		timeSinceReset = glfwGetTime();
-		solved = false;
+		resetRubik();
+	}
+
+	// Set up different rubik's
+	if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
+	{
+		if (currentCube != 1)
+		{
+			currentCube = 1;
+			resetRubik();
+		}
+	}
+	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
+	{
+		if (currentCube != 2)
+		{
+			currentCube = 2;
+			resetRubik();
+		}
+	}
+	if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
+	{
+		if (currentCube != 3)
+		{
+			currentCube = 3;
+			resetRubik();
+		}
+	}
+	if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS)
+	{
+		if (currentCube != 4)
+		{
+			currentCube = 4;
+			resetRubik();
+		}
 	}
 
 	// Handle x
@@ -615,26 +712,26 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 
 	// Hint sounds
-	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+	if (currentCube == 2 && glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 	{
 		engine->play2D("../Assets/Sound/ffxivhint.wav", false);
 	}
 
-	if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+	if (currentCube == 4 && glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 	{
 		engine->play2D("../Assets/Sound/lozhint.wav", false);
 	}
 
-	if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+	if (currentCube == 1 && glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 	{
 		engine->play2D("../Assets/Sound/disneyhint.wav", false);
 	}
 
-	if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+	if (currentCube == 3 && glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 	{
 		engine->play2D("../Assets/Sound/pkmnhint.wav", false);
 	}
-  
+
 	// Shuffle
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
@@ -771,12 +868,12 @@ void renderText(Shader* textShader, std::string text, float x, float y, float sc
 		// update VBO for each character
 		float vertices[6][4] = {
 			{ xpos,     ypos + h,   0.0f, 0.0f },
-			{ xpos,     ypos,       0.0f, 1.0f },
-			{ xpos + w, ypos,       1.0f, 1.0f },
+		{ xpos,     ypos,       0.0f, 1.0f },
+		{ xpos + w, ypos,       1.0f, 1.0f },
 
-			{ xpos,     ypos + h,   0.0f, 0.0f },
-			{ xpos + w, ypos,       1.0f, 1.0f },
-			{ xpos + w, ypos + h,   1.0f, 0.0f }
+		{ xpos,     ypos + h,   0.0f, 0.0f },
+		{ xpos + w, ypos,       1.0f, 1.0f },
+		{ xpos + w, ypos + h,   1.0f, 0.0f }
 		};
 		// render glyph texture over quad
 		glBindTexture(GL_TEXTURE_2D, ch.TextureID);
@@ -799,5 +896,5 @@ Render the time elapsed
 */
 void displayTime(Shader* textShader) {
 	std::string timeString = std::to_string(timeElapsed - timeSinceReset);
-	renderText(textShader, "Seconds elapsed: " + timeString, 750.0f, 700.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
+	renderText(textShader, "Seconds elapsed: " + timeString, 750.0f, 700.0f, 0.5f, glm::vec3(0.0f, 0.0f, 0.0f));
 }

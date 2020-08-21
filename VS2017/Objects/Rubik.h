@@ -29,7 +29,7 @@ public:
 	mat4 getModelMatrix();
 	void draw(Shader* shaderProgram, const bool isTexture);
 
-	void create();
+	void create(vector<std::string> faces);
 
 	Cubie cubies [DIM][DIM][DIM];
 	GLuint textureId;

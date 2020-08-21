@@ -201,21 +201,10 @@ void Rubik::transferZ(int k) {
 }
 
 
-void Rubik::create() {
+void Rubik::create(vector<std::string> faces) {
 	cubeVAO = cubies[0][0][0].createCubieVAO();
 	//textureId = loadTexture(filename); // -> for texture
 
-	// If we do 4 different Rubik's cubies, all we have to do is pass the vector of faces
-	// as param of create()
-	vector<std::string> faces
-	{
-		"../Assets/Textures/skybox/right.jpg",
-		"../Assets/Textures/skybox/left.jpg",
-		"../Assets/Textures/skybox/top.jpg",
-		"../Assets/Textures/skybox/bottom.jpg",
-		"../Assets/Textures/skybox/front.jpg",
-		"../Assets/Textures/skybox/back.jpg"
-	};
 	textures = loadTextures(faces);
 }
 
