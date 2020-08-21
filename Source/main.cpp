@@ -426,6 +426,22 @@ int main(int argc, char* argv[])
 			//setUpCamera(camera_ptr, shaderPrograms[1]);
 		}
 
+		// Draw Skybox
+		glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+		skyboxShader->use();
+		view = glm::mat4(glm::mat3(view)); // remove translation from the view matrix
+        skyboxShader->setMat4("view", view);
+		skyboxShader->setMat4("projection", projection);
+
+		glBindVertexArray(skyboxVAO);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexture);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
+		glDepthFunc(GL_LESS); // set depth function back to default
+
+		shaderProgram->use();
+
 		// Draw Timer
 		// Enable face culling and blending for text to appear
 		glDisable(GL_DEPTH_TEST);
@@ -452,21 +468,7 @@ int main(int argc, char* argv[])
 		// Draw Rubik's Cube models
 		rubik->draw(shaderProgram, isTexture);
 
-		// Draw Skybox
-		glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
-		skyboxShader->use();
-		view = glm::mat4(glm::mat3(view)); // remove translation from the view matrix
-        skyboxShader->setMat4("view", view);
-		skyboxShader->setMat4("projection", projection);
-
-		glBindVertexArray(skyboxVAO);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexture);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		glBindVertexArray(0);
-		glDepthFunc(GL_LESS); // set depth function back to default
-
-		shaderProgram->use();
+		
 		
 		// End frame
 		glfwSwapBuffers(window);
