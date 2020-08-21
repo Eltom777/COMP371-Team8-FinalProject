@@ -25,8 +25,8 @@ void main()
 
    // Lighting Component
    FragPos = vec3(worldMatrix * vec4(aPos, 1.0));
-       //Normal = mat3(transpose(inverse(worldMatrix ))) * aNormal; // World space technique, kept for debugging purposes
-       Normal = mat3(worldMatrix) * aNormal; // World space technique, kept for debugging purposes
+       Normal = transpose(inverse(mat3(worldMatrix))) * aNormal; // World space technique, kept for debugging purposes
+       //Normal = mat3(worldMatrix) * aNormal; // PREVIOUS
    // Normal = mat3(transpose(inverse(viewMatrix * worldMatrix))) * aNormal;  // view-space
    // LightPos = vec3(viewMatrix * vec4(lightPos, 1.0)); // view-space
        fragment_position_light_space = light_proj_view_matrix * vec4(FragPos, 1.0);

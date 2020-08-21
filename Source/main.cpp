@@ -176,6 +176,8 @@ int main(int argc, char* argv[])
 	}
 
 	// Black background
+	glEnable(GL_DEPTH_TEST);
+
 	
 
 	// Compile and link shaders here ...
@@ -185,6 +187,11 @@ int main(int argc, char* argv[])
 
 	// Set up for shadows
 	const unsigned int DEPTH_MAP_TEXTURE_SIZE = 1024;
+
+	GLuint depth_map_fbo;  // fbo: framebuffer object
+	glGenFramebuffers(1, &depth_map_fbo);
+
+
 
 	// Variable storing index to texture used for shadow mapping
 	GLuint depth_map_texture;
@@ -210,9 +217,7 @@ int main(int argc, char* argv[])
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 	// Variable storing index to framebuffer used for shadow mapping
-	GLuint depth_map_fbo;  // fbo: framebuffer object
 	// Get the framebuffer
-	glGenFramebuffers(1, &depth_map_fbo);
 	// Bind the framebuffer so the next glFramebuffer calls affect it
 	glBindFramebuffer(GL_FRAMEBUFFER, depth_map_fbo);
 	// Attach the depth map texture to the depth map framebuffer
@@ -235,6 +240,7 @@ int main(int argc, char* argv[])
 	objGrid.setup();
 
 	// Set View and Projection matrices on both shaders
+	shaderProgram->use();
 	setUpProjection(shaderProgram, camera_ptr);
 
 	shaderProgram->setInt("shadow_map", 3);
@@ -245,7 +251,7 @@ int main(int argc, char* argv[])
 	//double time = glfwGetTime();
 	// Entering Main Loop
 	// Enable z-buffer
-	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_DEPTH_TEST);
 	//glEnable(GL_CULL_FACE);
 
 	while (!glfwWindowShouldClose(window))
@@ -264,11 +270,11 @@ int main(int argc, char* argv[])
 
 		// Shadows
 		float lightNearPlane = 1.0f;
-		float lightFarPlane = 12.5f;
+		float lightFarPlane = 7.5f;
 
 		mat4 lightProjMatrix = /*frustum(-1.0f, 1.0f, -1.0f, 1.0f, lightNearPlane, lightFarPlane);*/
 			//perspective(1.0f, (float)DEPTH_MAP_TEXTURE_SIZE / (float)DEPTH_MAP_TEXTURE_SIZE, lightNearPlane, lightFarPlane);
-			glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, lightNearPlane, lightFarPlane);
+			glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, lightNearPlane, lightFarPlane);
 
 
 		//vec3 lightPos = camera_ptr->cameraPos;
@@ -281,7 +287,7 @@ int main(int argc, char* argv[])
 		vec3 lightDirection = normalize(lightFocus - lightPos);
 		mat4 lightViewMatrix = lookAt(lightPos, lightFocus, vec3(0.0f, 1.0f, 0.0f));
 
-		mat4 debug = lightProjMatrix * lightViewMatrix;
+		mat4 proj_x_view = lightProjMatrix * lightViewMatrix;
 
 		// I suspect that the lightProjMatrix might be problematic
 		std::cout << " light PROJ Matrix " << glm::to_string(lightProjMatrix) << std::endl;
@@ -289,9 +295,9 @@ int main(int argc, char* argv[])
 		
 
 		shaderProgram->use();
-		shaderProgram->setMat4("light_proj_view_matrix", lightProjMatrix * lightViewMatrix);
+		shaderProgram->setMat4("light_proj_view_matrix", proj_x_view);
 
-		std::cout << " LIGHT PROJ XXX VIEW MATRIX " << glm::to_string(debug) << std::endl;
+		std::cout << " LIGHT PROJ XXX VIEW MATRIX " << glm::to_string(proj_x_view) << std::endl;
 		
 
 		// Important: setting worldmatrix back to normal so other stuff doesn't get scaled down
@@ -303,7 +309,7 @@ int main(int argc, char* argv[])
 
 		// value for shadowShader
 		shadowShader->use();
-		shadowShader->setMat4("proj_x_view", lightProjMatrix * lightViewMatrix);
+		shadowShader->setMat4("proj_x_view", proj_x_view);
 
 		// Model Render Mode
 		renderMode(window);
@@ -328,6 +334,8 @@ int main(int argc, char* argv[])
 		glViewport(0, 0, DEPTH_MAP_TEXTURE_SIZE, DEPTH_MAP_TEXTURE_SIZE);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, depth_map_fbo);
+
+		glClear(GL_DEPTH_BUFFER_BIT);
 
 
 		renderShadowGrid(shadowShader, objGrid, &depth_map_fbo);

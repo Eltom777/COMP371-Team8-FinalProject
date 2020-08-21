@@ -83,13 +83,25 @@ void main()
         textureColor = vec4(vertexColor.r, vertexColor.g, vertexColor.b, 1.0);
     }
 
+    // Return color using a vec3
+    vec3 thiscolor;
+
+    if (isTexture) {
+        thiscolor = texture(textureSampler, vertexUV).rgb;
+    }
+    else {
+        thiscolor = vec3(vertexColor.r, vertexColor.g, vertexColor.b);
+    }
+
+
     // Shadow Calculation
     float shadowScalar = shadow_scalar();
     //float shadowScalar = 1.0f;
 
     // ambient
 	float ambientStrength = 1.0f;
-	vec3 ambient = ambientStrength * (materialAmbient * lightColor);
+	//vec3 ambient = ambientStrength * (materialAmbient * lightColor);
+    vec3 ambient = ambientStrength * thiscolor * materialAmbient;
 
     // diffuse
 	vec3 norm = normalize(Normal);
@@ -119,15 +131,7 @@ void main()
     // Technique in the lab to render lighting and shadow
     //vec4 tempResult = vec4((ambient + diffuse + specular), 1.0);
 
-    // Return color using a vec3
-    vec3 thiscolor;
 
-    if (isTexture) {
-        kolor = texture(textureSampler, vertexUV).rgb;
-    }
-    else {
-        kolor = vec3(vertexColor.r, vertexColor.g, vertexColor.b);
-    }
 
     vec3 lighting = (ambient + (1.0 - shadowScalar) * (diffuse + specular)) * thiscolor;
     vec4 result = vec4(lighting, 1.0);
