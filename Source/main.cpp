@@ -306,6 +306,9 @@ void displayTime(Shader shader) {
 	RenderText(shader, "Seconds elapsed: " + timeString, 750.0f, 700.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
 }
 
+double seconds = 0.0;
+float t = 0.0f;
+
 /*
 Main method
 */
@@ -376,6 +379,11 @@ int main(int argc, char* argv[])
 		glfwGetWindowSize(window, &width, &height); // if window is resized, get new size to draw perspective view correctly
 		setUpProjection(shaderProgram, camera_ptr);
 		//setUpProjection(shaderPrograms[1], camera_ptr);
+
+		// Time for animation
+		time = glfwGetTime();
+		dt = time - last;
+		last = time;
 
 		// Important: setting worldmatrix back to normal so other stuff doesn't get scaled down
 		shaderProgram->setMat4("worldMatrix", mat4(1.0f));
@@ -502,7 +510,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	{
 		rubik->~Rubik();
 		rubik = new Rubik();
-    timeSinceReset = glfwGetTime();
+		timeSinceReset = glfwGetTime();
 		solved = false;
 	}
 
