@@ -121,7 +121,7 @@ vector<std::string> pokemonFaces
 	"../Assets/Textures/pokemon/sha.jpg",       //front
 	"../Assets/Textures/pokemon/pikchu.jpg",    //left
 	"../Assets/Textures/pokemon/ditto.jpg",     //right
-	"../Assets/Textures/pokemon/halloween.jpg", //botton
+	"../Assets/Textures/pokemon/dry.jpg", //botton
 	"../Assets/Textures/pokemon/pokeball.jpg"   //top
 };
 
