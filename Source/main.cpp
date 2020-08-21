@@ -325,6 +325,9 @@ int main(int argc, char* argv[])
 	// Setup FreeType
 	configureFreeType();
 
+	//----------------------------------------------------
+	// Set up Skybox
+	// TODO: if we have time, we can clean it up to its own class
 	float skyboxVertices[] = {
 		// positions          
 		-1.0f,  1.0f, -1.0f,
@@ -393,6 +396,8 @@ int main(int argc, char* argv[])
 
 	skyboxShader->use();
 	skyboxShader->setInt("skybox", 0);
+	//END of Skybox setup
+	//----------------------------------------------------
 
 	// Entering Main Loop
 	while (!glfwWindowShouldClose(window))
@@ -460,6 +465,7 @@ int main(int argc, char* argv[])
 		view = glm::mat4(glm::mat3(view)); // remove translation from the view matrix
         skyboxShader->setMat4("view", view);
 		skyboxShader->setMat4("projection", projection);
+
 		glBindVertexArray(skyboxVAO);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexture);
