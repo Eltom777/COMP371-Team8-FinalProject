@@ -161,22 +161,6 @@ void Cubie::draw(vector<GLuint> textures)
 	glDrawArraysInstanced(GL_TRIANGLES, first[5], count[5], 1);
 }
 
-void Cubie::create() {
-	cubieVAO = createCubieVAO();
-	//NOT CALLED
-	//textureId = loadTexture(filename);
-	/*vector<std::string> faces
-	{
-		"../Assets/Textures/skybox/right.jpg",
-		"../Assets/Textures/skybox/left.jpg",
-		"../Assets/Textures/skybox/top.jpg",
-		"../Assets/Textures/skybox/bottom.jpg",
-		"../Assets/Textures/skybox/front.jpg",
-		"../Assets/Textures/skybox/back.jpg"
-	};
-	textureId = loadCubemap(faces);*/
-}
-
 int Cubie::createCubieVAO() {
 	GLuint vao;
 	glGenVertexArrays(1, &vao);

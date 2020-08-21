@@ -136,15 +136,6 @@ glm::mat4 setUpProjection(Shader* shaderProgram, Camera* camera) {
 	return Projection;
 }
 
-void setUpProjection(Shader* shaderProgram, Camera* camera) {
-	// Set up Perspective View
-	glm::mat4 Projection = glm::perspective(glm::radians(camera->fov),  // field of view in degrees
-		(float)width / height,     // aspect ratio
-		0.01f, 100.0f);      // near and far (near > 0)
-
-	shaderProgram->setMat4("projectionMatrix", Projection);
-}
-
 void setUpProjectionText(Shader* textShader) {
 	glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height));
 	textShader->use();
