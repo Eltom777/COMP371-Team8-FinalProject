@@ -41,8 +41,7 @@ int height = 768;
 // Which Rubik's cube we are currently playing (1, 2, 3, 4)
 static int currentCube = 1;
 
-// Textures not enabled yet
-bool isTexture = false;
+// Settings for lighting and music
 bool isLighting = true;
 bool isMusic = true;
 
@@ -515,7 +514,7 @@ int main(int argc, char* argv[])
 		last = time;
 
 		// Draw Rubik's Cube models
-		rubik->draw(shaderProgram, isTexture);
+		rubik->draw(shaderProgram, false);
 
 		// End frame
 		glfwSwapBuffers(window);
@@ -586,16 +585,6 @@ void resetRubik()
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-	if (key == GLFW_KEY_X && action == GLFW_PRESS)
-	{
-		if (isTexture) {
-			isTexture = false;
-		}
-		else {
-			isTexture = true;
-		}
-	}
-
 	// Turn backing track on and off
 	if (key == GLFW_KEY_M && action == GLFW_PRESS) {
 		isMusic = !isMusic;
@@ -608,6 +597,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		}
 	}
 
+	// Turn lighting on and off
 	if (key == GLFW_KEY_B && action == GLFW_PRESS)
 	{
 		if (isLighting) {
@@ -894,5 +884,5 @@ Render the time elapsed
 */
 void displayTime(Shader* textShader) {
 	std::string timeString = std::to_string(timeElapsed - timeSinceReset);
-	renderText(textShader, "Seconds elapsed: " + timeString, 750.0f, 700.0f, 0.5f, glm::vec3(0.0f, 0.0f, 0.0f));
+	renderText(textShader, "Time elapsed (seconds): " + timeString, 690.0f, 710.0f, 0.5f, glm::vec3(0.0f, 0.0f, 0.0f));
 }
