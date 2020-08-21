@@ -19,13 +19,13 @@
 #include <GLFW/glfw3.h> // GLFW provides a cross-platform interface for creating a graphical context,
 						// initializing OpenGL and binding inputs
 
-#include <irrKlang.h>	//irrKlang is a sound engine to play WAV, MP3, OGG, FLAC, MOD, XM, IT, S3M and more file formats
+#include <irrKlang.h>	// irrKlang is a sound engine to play WAV, MP3, OGG, FLAC, MOD, XM, IT, S3M and more file formats
 
 #include <glm/glm.hpp>  // GLM is an optimized math library with syntax to similar to OpenGL Shading Language
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <ft2build.h>
+#include <ft2build.h> // FreeType is a library used for rendering text
 #include FT_FREETYPE_H 
 
 #include <Camera.h>
@@ -72,7 +72,7 @@ glm::vec3 specular(1.0f);
 const float MIN_RAND = -0.5f, MAX_RAND = 0.5f;
 const float range = MAX_RAND - MIN_RAND;
 
-// Time variable
+// Time variables
 double timeElapsed = 0.0;
 double timeSinceReset = 0.0;
 
@@ -92,16 +92,19 @@ void scroll_callback(GLFWwindow* window, double xOffset, double yOffset);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
-//Function for operation and animation
+// Functions for operation and animation
 void operation();
 int shuffle();
 
-//Rubik's Cube
+// Functions for rendering text and time elapsed
+void renderText(Shader* textShader, std::string text, float x, float y, float scale, glm::vec3 color);
+void displayTime(Shader* textShader);
+
+// Rubik's Cube
 Rubik* rubik = new Rubik();
 bool solved = false;
 
-//Initialize sound Engine
-//start the sound engine with default parameters
+// Initialize sound Engine; start the sound engine with default parameters
 irrklang::ISoundEngine* engine = irrklang::createIrrKlangDevice();
 irrklang::ISound* music;
 
@@ -256,67 +259,6 @@ int configureFreeType() {
 }
 
 /*
-Taken from: https://learnopengl.com/code_viewer_gh.php?code=src/7.in_practice/2.text_rendering/text_rendering.cpp
-*/
-void RenderText(Shader* textShader, std::string text, float x, float y, float scale, glm::vec3 color)
-{
-	// activate corresponding render state	
-	//shader.use();
-	textShader->use();
-	textShader->setVec3("textColor", glm::vec3(color.x, color.y, color.z));
-	//glUniform3f(glGetUniformLocation(shader.ID, "textColor"), color.x, color.y, color.z);
-	glActiveTexture(GL_TEXTURE0);
-	glBindVertexArray(VAO);
-
-	// iterate through all characters
-	std::string::const_iterator c;
-	for (c = text.begin(); c != text.end(); c++)
-	{
-		Character ch = Characters[*c];
-
-		float xpos = x + ch.Bearing.x * scale;
-		float ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
-
-		float w = ch.Size.x * scale;
-		float h = ch.Size.y * scale;
-		// update VBO for each character
-		float vertices[6][4] = {
-			{ xpos,     ypos + h,   0.0f, 0.0f },
-			{ xpos,     ypos,       0.0f, 1.0f },
-			{ xpos + w, ypos,       1.0f, 1.0f },
-
-			{ xpos,     ypos + h,   0.0f, 0.0f },
-			{ xpos + w, ypos,       1.0f, 1.0f },
-			{ xpos + w, ypos + h,   1.0f, 0.0f }
-		};
-		// render glyph texture over quad
-		glBindTexture(GL_TEXTURE_2D, ch.TextureID);
-		// update content of VBO memory
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices); // be sure to use glBufferSubData and not glBufferData
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		// render quad
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-		// now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-		x += (ch.Advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
-	}
-	glBindVertexArray(0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-}
-
-/*
-Render the time elapsed
-*/
-void displayTime(Shader* textShader) {
-	std::string timeString = std::to_string(timeElapsed - timeSinceReset);
-	RenderText(textShader, "Seconds elapsed: " + timeString, 750.0f, 700.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
-}
-
-//double seconds = 0.0;
-//float t = 0.0f;
-
-/*
 Main method
 */
 int main(int argc, char* argv[])
@@ -348,7 +290,7 @@ int main(int argc, char* argv[])
 
 	if (!engine) {
 		std::cerr << "Failed to load sound engine" << std::endl;
-		return -1; // error starting up the engine
+		return -1; // Error starting up the engine
 	}
 
 	// Black background
@@ -368,8 +310,8 @@ int main(int argc, char* argv[])
 	// Load Texture and VAO for Models
 	rubik->create();
 
-	// play some sound stream, looped
-	//music is not null if parameters 'track', 'startPaused' or 'enableSoundEffects' have been set to true.
+	// Play some sound stream, looped
+	// Music is not null if parameters 'track', 'startPaused' or 'enableSoundEffects' have been set to true.
 	music = engine->play2D("../Assets/Sound/BackingTrack.mp3", true, false, false, irrklang::ESM_AUTO_DETECT, true);
 	music->setVolume(0.3f);
 	
@@ -415,7 +357,7 @@ int main(int argc, char* argv[])
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		if (!solved) {
-			timeElapsed = glfwGetTime(); // update time if the puzzle has not yet been solved
+			timeElapsed = glfwGetTime(); // Update time if the puzzle has not yet been solved
 		}
 		displayTime(textShader);
 
@@ -494,9 +436,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		}
 	}
 
-	/*
-	turn backing track on and off
-	*/
+	// Turn backing track on and off
 	if (key == GLFW_KEY_M && action == GLFW_PRESS) {
 		isMusic = !isMusic;
 
@@ -529,7 +469,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		solved = false;
 	}
 
-	//handle x
+	// Handle x
 	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS)
 	{
 		engine->play2D("../Assets/Sound/click.wav", false);
@@ -546,7 +486,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		command = 3;
 	}
 
-	//handle y
+	// Handle y
 	if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS)
 	{
 		engine->play2D("../Assets/Sound/click.wav", false);
@@ -563,7 +503,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		command = 6;
 	}
 
-	//handle z
+	// Handle z
 	if (glfwGetKey(window, GLFW_KEY_7) == GLFW_PRESS)
 	{
 		engine->play2D("../Assets/Sound/click.wav", false);
@@ -580,7 +520,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		command = 9;
 	}
 
-	// hint sounds
+	// Hint sounds
 	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 	{
 		engine->play2D("../Assets/Sound/ffxivhint.wav", false);
@@ -601,6 +541,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		engine->play2D("../Assets/Sound/pkmnhint.wav", false);
 	}
   
+	// Shuffle
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
 		shuffleCount = 10;
@@ -608,6 +549,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 }
 
+/*
+Shuffle Rubik's cube
+*/
 int shuffle() {
 	// let's go with 9 moves for now
 	const int min = 1;
@@ -617,6 +561,9 @@ int shuffle() {
 	return command = (rand() % (max + 1 - min)) + min;
 }
 
+/*
+Translation operations on Rubik's cube
+*/
 void operation() {
 	if (animationAngle < 90.0f)
 	{
@@ -702,4 +649,61 @@ void operation() {
 		command = -1;
 		animationAngle = 0.0f;
 	}
+}
+
+/*
+Taken from: https://learnopengl.com/code_viewer_gh.php?code=src/7.in_practice/2.text_rendering/text_rendering.cpp
+*/
+void renderText(Shader* textShader, std::string text, float x, float y, float scale, glm::vec3 color) {
+	// activate corresponding render state	
+	//shader.use();
+	textShader->use();
+	textShader->setVec3("textColor", glm::vec3(color.x, color.y, color.z));
+	//glUniform3f(glGetUniformLocation(shader.ID, "textColor"), color.x, color.y, color.z);
+	glActiveTexture(GL_TEXTURE0);
+	glBindVertexArray(VAO);
+
+	// iterate through all characters
+	std::string::const_iterator c;
+	for (c = text.begin(); c != text.end(); c++)
+	{
+		Character ch = Characters[*c];
+
+		float xpos = x + ch.Bearing.x * scale;
+		float ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
+
+		float w = ch.Size.x * scale;
+		float h = ch.Size.y * scale;
+		// update VBO for each character
+		float vertices[6][4] = {
+			{ xpos,     ypos + h,   0.0f, 0.0f },
+			{ xpos,     ypos,       0.0f, 1.0f },
+			{ xpos + w, ypos,       1.0f, 1.0f },
+
+			{ xpos,     ypos + h,   0.0f, 0.0f },
+			{ xpos + w, ypos,       1.0f, 1.0f },
+			{ xpos + w, ypos + h,   1.0f, 0.0f }
+		};
+		// render glyph texture over quad
+		glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+		// update content of VBO memory
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices); // be sure to use glBufferSubData and not glBufferData
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		// render quad
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		// now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+		x += (ch.Advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+	}
+	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+/*
+Render the time elapsed
+*/
+void displayTime(Shader* textShader) {
+	std::string timeString = std::to_string(timeElapsed - timeSinceReset);
+	renderText(textShader, "Seconds elapsed: " + timeString, 750.0f, 700.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
 }
