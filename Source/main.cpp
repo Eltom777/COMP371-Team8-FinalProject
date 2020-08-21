@@ -737,7 +737,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 	if (currentCube == 3 && glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 	{
-		engine->play2D("../Assets/Sound/pkmnhint.wav", false);
+		engine->play2D("../Assets/Sound/pkmnsolve.wav", false);
 	}
 
 	// Shuffle
