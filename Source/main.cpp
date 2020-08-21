@@ -74,7 +74,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 //Function for operation and animation
 void operation();
-void shuffle();
+int shuffle();
 
 //Rubik's Cube
 Rubik* rubik = new Rubik();
@@ -138,8 +138,8 @@ void setUpCamera(Camera* camera, Shader* shaderProgram) {
 	shaderProgram->setMat4("viewMatrix", viewMatrix);
 }
 
-double seconds = 0.0;
-float t = 0.0f;
+//double seconds = 0.0;
+//float t = 0.0f;
 /*
 Main method.
 */
@@ -249,12 +249,13 @@ int main(int argc, char* argv[])
 		// Detect inputs
 		if (command == -1) {
 			glfwPollEvents();
+
+			if (shuffleCount > 0) {
+				command = shuffle();
+				operation();
+				shuffleCount--;
+			}
 		}
-		else if (shuffleCount > 0) {
-			shuffle();
-			operation;
-			shuffleCount--;
-		} 
 		else {
 			operation();
 		}
@@ -394,59 +395,69 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
 		shuffleCount = 10;
-		shuffle();
+		//shuffleX();
 	}
 }
 
-void shuffle() {
+int shuffle() {
 	// let's go with 9 moves for now
 	const int min = 1;
 	const int max = 9;
 
 	engine->play2D("../Assets/Sound/click.wav", false);
-	command = (rand() % (max + 1 - min)) + min;
+	return command = (rand() % (max + 1 - min)) + min;
 }
 
 void operation() {
+	//angle = (angle + PI/16 * dt);
 	if (angle < 90.0f)
 	{
 		switch (command)
 		{
 		case 1: rubik->translateX(0, angularSpeed, dt);
-				angle += angularSpeed * dt;
-				break;
+			//angle += angularSpeed * dt;
+			angle += 5.0f;
+			break;
 
 		case 2: rubik->translateX(1, angularSpeed, dt);
-				angle += angularSpeed * dt;
-				break;
+			//angle += angularSpeed * dt;
+			angle += 5.0f;
+			break;
 
 		case 3: rubik->translateX(2, angularSpeed, dt);
-				angle += angularSpeed * dt;
-				break;
+			//angle += angularSpeed * dt;
+			angle += 5.0f;
+			break;
 
 		case 4: rubik->translateY(0, angularSpeed, dt);
-				angle += angularSpeed * dt;
-				break;
+			//angle += angularSpeed * dt;
+			angle += 5.0f;
+			break;
 
 		case 5: rubik->translateY(1, angularSpeed, dt);
-				angle += angularSpeed * dt;
-				break;
+			//angle += angularSpeed * dt;
+			angle += 5.0f;
+			break;
 
 		case 6: rubik->translateY(2, angularSpeed, dt);
-				angle += angularSpeed * dt;
-				break;
+			//angle += angularSpeed * dt;
+			angle += 5.0f;
+			break;
 
 		case 7: rubik->translateZ(0, angularSpeed, dt);
-				angle += angularSpeed * dt;
-				break;
+			//angle += angularSpeed * dt;
+			angle += 5.0f;
+			break;
 
 		case 8: rubik->translateZ(1, angularSpeed, dt);
-				angle += angularSpeed * dt;
-				break;
+			//angle += angularSpeed * dt;
+			angle += 5.0f;
+			break;
 
 		case 9: rubik->translateZ(2, angularSpeed, dt);
-				angle += angularSpeed * dt;
-				break;
+			//angle += angularSpeed * dt;
+			angle += 5.0f;
+			break;
 		}
 	}
 	else {
