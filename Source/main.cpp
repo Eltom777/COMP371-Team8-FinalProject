@@ -397,7 +397,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 	if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 	{
-		engine->play2D("../Assets/Sound/disneyhint.wav", false);
+		engine->play2D("../Assets/Sound/pkmnhint.wav", false);
 	}
 
 }
