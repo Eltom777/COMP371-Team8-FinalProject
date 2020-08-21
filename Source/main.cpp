@@ -329,24 +329,24 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 
 	//handle x
-	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS)
 	{
 		engine->play2D("../Assets/Sound/click.wav", false);
 		command = 1;
 	}
-	if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS)
 	{
 		engine->play2D("../Assets/Sound/click.wav", false);
 		command = 2;
 	}
-	if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS)
 	{
 		engine->play2D("../Assets/Sound/click.wav", false);
 		command = 3;
 	}
 
 	//handle y
-	if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS)
 	{
 		engine->play2D("../Assets/Sound/click.wav", false);
 		command = 4;
@@ -380,11 +380,24 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 
 	// hint sounds
-	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 	{
-		// insert checking for which version of the puzzle so we can play corresponding hint sound
-		// instead of having 4 different hint buttons
 		engine->play2D("../Assets/Sound/ffxivhint.wav", false);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+	{
+		engine->play2D("../Assets/Sound/lozhint.wav", false);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+	{
+		engine->play2D("../Assets/Sound/disneyhint.wav", false);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+	{
+		engine->play2D("../Assets/Sound/disneyhint.wav", false);
 	}
 
 }
