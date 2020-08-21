@@ -41,6 +41,9 @@ int height = 768;
 // Which Rubik's cube we are currently playing (1, 2, 3, 4)
 static int currentCube = 1;
 
+// Which music is currently playing
+static int currentMusic = 1;
+
 // Textures not enabled yet
 bool isTexture = false;
 bool isLighting = true;
@@ -599,6 +602,22 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 
 	// Turn backing track on and off
+	if (key == GLFW_KEY_N && action == GLFW_PRESS) {
+		if (currentMusic == 1)
+		{
+			currentMusic = 2;
+			engine->removeSoundSource("../Assets/Sound/BackingTrack.mp3");
+			music = engine->play2D("../Assets/Sound/Mii Channel Music.mp3", true, false, false, irrklang::ESM_AUTO_DETECT, true);
+		}
+		else if (currentMusic == 2)
+		{
+			currentMusic = 1;
+			engine->removeSoundSource("../Assets/Sound/Mii Channel Music.mp3");
+			music = engine->play2D("../Assets/Sound/BackingTrack.mp3", true, false, false, irrklang::ESM_AUTO_DETECT, true);
+			
+		}
+	}
+
 	if (key == GLFW_KEY_M && action == GLFW_PRESS) {
 		isMusic = !isMusic;
 

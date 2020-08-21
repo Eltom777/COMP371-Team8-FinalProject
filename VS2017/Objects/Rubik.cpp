@@ -204,7 +204,6 @@ void Rubik::transferZ(int k) {
 void Rubik::create(vector<std::string> faces) {
 	cubeVAO = cubies[0][0][0].createCubieVAO();
 	//textureId = loadTexture(filename); // -> for texture
-
 	textures = loadTextures(faces);
 }
 
