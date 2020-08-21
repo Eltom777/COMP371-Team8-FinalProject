@@ -178,17 +178,6 @@ void Cubie::create() {
 }
 
 int Cubie::createCubieVAO() {
-	//textureId = loadTexture(filename);
-	/*vector<std::string> faces
-	{
-		"../Assets/Textures/skybox/right.jpg",
-		"../Assets/Textures/skybox/left.jpg",
-		"../Assets/Textures/skybox/top.jpg",
-		"../Assets/Textures/skybox/bottom.jpg",
-		"../Assets/Textures/skybox/front.jpg",
-		"../Assets/Textures/skybox/back.jpg"
-	};
-	textures = loadCubemap(faces);*/
 	GLuint vao;
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);

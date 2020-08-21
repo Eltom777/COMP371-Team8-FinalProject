@@ -107,7 +107,6 @@ void Rubik::draw(Shader* shaderProgram, const bool isTexture) {
 	//bind vao
 	glBindVertexArray(cubeVAO);
 
-
 	//draw each cube
 	// k = x, j = y, i = z
 	for (int i = 0; i < DIM; i++) {
@@ -133,7 +132,7 @@ void Rubik::create() {
 		"../Assets/Textures/skybox/front.jpg",
 		"../Assets/Textures/skybox/back.jpg"
 	};
-	//textures = loadTextures(faces);
+	textures = loadTextures(faces);
 	//textureId = loadCubemap(faces);
 }
 
