@@ -41,8 +41,7 @@ int height = 768;
 // Which Rubik's cube we are currently playing (1, 2, 3, 4)
 static int currentCube = 1;
 
-// Textures not yet enabled
-bool isTexture = false;
+// Settings for lighting and music
 bool isLighting = true;
 bool isMusic = true;
 
