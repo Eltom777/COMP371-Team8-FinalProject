@@ -14,7 +14,7 @@
     <ProjectGuid>{277EAE68-9EED-4EFF-BAD3-2A70787A3E8D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Labs</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
     <ProjectName>COMP371-FinalProject</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -61,12 +61,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../ThirdParty/glew-2.1.0/include;../ThirdParty/FreeImage-3170/Source;../ThirdParty/glfw-3.3/include;../ThirdParty/glm;../VS2017;../VS2017/Shaders;../VS2017/Objects;../VS2017/Objects/Letters;../VS2017/Objects/Numbers;../VS2017/Objects/Students;../VS2017/ThirdParty/;../VS2017/ThirdParty/drawtext.h;../ThirdParty/irrKlang/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../ThirdParty/glew-2.1.0/include;../ThirdParty/FreeImage-3170/Source;../ThirdParty/irrKlang/lib;../ThirdParty/glfw-3.3/include;../ThirdParty/glm;../VS2017;../VS2017/Shaders;../VS2017/Objects;../VS2017/Objects/Letters;../VS2017/Objects/Numbers;../VS2017/Objects/Students;../VS2017/ThirdParty/;../VS2017/ThirdParty/drawtext.h;../ThirdParty/irrKlang/include;../ThirdParty/irrKlang-64bit-1.6.0;../ThirdParty/irrKlang-32bit-1.6.0/irrKlang-1.6.0;../ThirdParty/irrKlang-1.6.0;C:\Users\nix\Documents\UNI\371\COMP371-Team8-FinalProject\ThirdParty\irrKlang-1.6.0\bin\win32-visualStudio"C:\Users\nix\Documents\UNI\371\COMP371-Team8-FinalProject\ThirdParty\irrKlang-1.6.0\bin\win32-visualStudio"</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../ThirdParty/irrKlang/lib;../ThirdParty/FreeImage-3170/lib/win32;../ThirdParty/glew-2.1.0/lib/win32;../ThirdParty/glfw-3.3/lib/win32/lib-vc2017</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../ThirdParty/irrKlang/lib;../ThirdParty/FreeImage-3170/lib/win32;../ThirdParty/glew-2.1.0/lib/win32;../ThirdParty/glfw-3.3/lib/win32/lib-vc2017;C:\Users\nix\Documents\UNI\371\COMP371-Team8-FinalProject\ThirdParty\irrKlang\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>irrKlang.lib;FreeImage.lib;opengl32.lib;glew32s.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <BuildLog>

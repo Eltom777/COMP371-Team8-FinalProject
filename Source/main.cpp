@@ -195,7 +195,7 @@ int main(int argc, char* argv[])
 	// play some sound stream, looped
 	//music is not null if parameters 'track', 'startPaused' or 'enableSoundEffects' have been set to true.
 	music = engine->play2D("../Assets/Sound/BackingTrack.mp3", true, false, false, irrklang::ESM_AUTO_DETECT, true);
-	music->setVolume(0.8f);
+	music->setVolume(0.3f);
 	
 
 	//double time = glfwGetTime();
@@ -338,28 +338,25 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		rubik = new Rubik();
 	}
 
-	//DOESN'T WORK BECAUSE IF YOU MOVE X, THEN THE POSITIONS ARE MESSED UP WHEN MOVING Y OR Z
-	//MAYBE MAKE AN ARRAY OR A LINKED LIST THAT'S UPDATED EVERYTIME YOU DO A MOVE
-	//AND WHEN YOU PRESS 1, INSTEAD OF GOING THROUGH A NESTED LOOP, IT GOES THROUGH THE ARRAY
 	//handle x
-	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS)
 	{
 		engine->play2D("../Assets/Sound/click.wav", false);
 		command = 1;
 	}
-	if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS)
 	{
 		engine->play2D("../Assets/Sound/click.wav", false);
 		command = 2;
 	}
-	if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS)
 	{
 		engine->play2D("../Assets/Sound/click.wav", false);
 		command = 3;
 	}
 
 	//handle y
-	if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) != GLFW_PRESS)
 	{
 		engine->play2D("../Assets/Sound/click.wav", false);
 		command = 4;
@@ -392,6 +389,27 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		command = 9;
 	}
 
+	// hint sounds
+	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+	{
+		engine->play2D("../Assets/Sound/ffxivhint.wav", false);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+	{
+		engine->play2D("../Assets/Sound/lozhint.wav", false);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+	{
+		engine->play2D("../Assets/Sound/disneyhint.wav", false);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+	{
+		engine->play2D("../Assets/Sound/pkmnhint.wav", false);
+	}
+  
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
 		shuffleCount = 10;
