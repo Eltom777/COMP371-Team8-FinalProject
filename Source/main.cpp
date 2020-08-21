@@ -141,7 +141,7 @@ vector<std::string> disneyFaces
 {
 	"../Assets/Textures/disney/ariel.jpg",
 	"../Assets/Textures/disney/cinderella.jpg",
-	"../Assets/Textures/disney/mickey.jpg",
+	"../Assets/Textures/disney/poohreading.jpg",
 	"../Assets/Textures/disney/nala.jpg",
 	"../Assets/Textures/disney/stitch.jpg",
 	"../Assets/Textures/disney/huh.jpg"
