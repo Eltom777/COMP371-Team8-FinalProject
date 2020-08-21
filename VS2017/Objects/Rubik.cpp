@@ -10,19 +10,10 @@ mat4 Rubik::getModelMatrix() {
 }
 
 Rubik::Rubik() {
-
 	setup();
 	cubies;
 
-	filename = "../Assets/Textures/tch.jpg";
-
-	/*this->isLetter = isLetter;
-	if (isLetter) {
-		filename = "../Assets/Textures/Wood.jpg";
-	}
-	else {
-		filename = "../Assets/Textures/Metal.jpg";
-	}*/
+	//filename = "../Assets/Textures/tch.jpg";
 }
 
 void Rubik::setup() {
@@ -46,8 +37,6 @@ void Rubik::setup() {
 		ylength = 0.68;
 		zlength -= (shift);
 	}
-
-	baseTest = cubies[1][1][0];
 }
 
 void Rubik::translateX(int k, float angularSpeed, float dt)
@@ -92,66 +81,11 @@ void Rubik::translateZ(int k, float angularSpeed, float dt)
 	}
 }
 
-//void Rubik::scaleModel(mat4 s)
-//{
-//	//Place back to origin
-//	vec3 translationComponent = vec3(modelMatrix[3][0], modelMatrix[3][1], modelMatrix[3][2]);
-//	mat4 tempworldMatrix = translate(mat4(1.0), translationComponent * -1.0f); //place back to origin
-//	translateModel(tempworldMatrix);
-//
-//	modelMatrix = s * modelMatrix;
-//	translateModel(s);
-//
-//	//Place back to original spot
-//	tempworldMatrix = translate(mat4(1.0), translationComponent);
-//	translateModel(tempworldMatrix);
-//}
-//
-//void Rubik::rotateModel(mat4 r, GLuint worldMatrixLocation)
-//{
-//	////Place back to origin
-//	vec3 translationComponent = vec3(modelMatrix[3][0], modelMatrix[3][1], modelMatrix[3][2]);
-//	mat4 tempworldMatrix = translate(mat4(1.0), translationComponent * -1.0f); //place back to origin
-//	translateModel(tempworldMatrix);
-//
-//	//modelMatrix = r * modelMatrix;
-//	//translateModel(r);
-//
-//	//Place back to original spot
-//	tempworldMatrix = translate(mat4(1.0), translationComponent);
-//	translateModel(tempworldMatrix);
-//}
-//
-
-
-//void Rubik::translateModelTop(mat4 t)
-//{
-//	modelMatrix = t * modelMatrix;
-//
-//	for (int i = 0; i < numberOfTopCubies; i++) {
-//		topComponents[i].updateTranslation(t);
-//	}
-//}
-//
-//void Rubik::updateModelMatrix() {
-//	modelMatrix = translationMatrix * scalingMatrix * rotationMatrix * modelMatrix;
-//}
 void Rubik::draw(Shader* shaderProgram, const bool isTexture) {
 
 	shaderProgram->use();
-
-	/*if (isLetter) {
-		shaderProgram->setInt("textureType", 0);
-	}
-	else {
-		shaderProgram->setInt("textureType", 2);
-	}*/
-
 	shaderProgram->setInt("textureType", 0);
 	shaderProgram->setBool("isTexture", true);
-	//if (isTexture) {
-
-	//	//shaderProgram->setBool("isTexture", isTexture);
 
 	//	/*if (isLetter) {
 	//		glActiveTexture(GL_TEXTURE1);
@@ -160,28 +94,11 @@ void Rubik::draw(Shader* shaderProgram, const bool isTexture) {
 	//		glActiveTexture(GL_TEXTURE2);
 	//	}*/
 
-	//	//bind texture
-	//	//glActiveTexture(GL_TEXTURE0);
-	//	//glBindTexture(GL_TEXTURE_2D, textureId);
-	//	
-	//	//glUniform1i(shaderProgram->getLocation("textureSampler"), 0);
-
-	//	/*for (int l = 0; l < 6; l++)
-	//	{
-	//		glActiveTexture(GL_TEXTURE0);
-	//		glBindTexture(GL_TEXTURE_2D, textures[0]);
-	//	}*/
-	//}
-
-	/*glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, textures[3]);*/
-
 	// Disable blending
 	glDisable(GL_BLEND);
 
 	//bind vao
 	glBindVertexArray(cubeVAO);
-
 
 	//draw each cube
 	// k = x, j = y, i = z
@@ -189,44 +106,13 @@ void Rubik::draw(Shader* shaderProgram, const bool isTexture) {
 		for (int j = 0; j < DIM; j++) {
 			for (int k = 0; k < DIM; k++) {
 				shaderProgram->setMat4("worldMatrix", cubies[i][j][k].getModelMatrix());
-
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, textureId);
-				glDrawArrays(GL_TRIANGLES, 0, 36);
-
-				//here we could call draw() in Cubie.cpp and change each face textures there
-				//once i figure out how to load textures :))))))))))))))))))
-				//OR i can use i/j/k maybe ??
-				//glDrawArrays(GL_TRIANGLES, 0, 36); 
-				//glDrawArrays(GL_TRIANGLES, 0, 6); for textures somehow ?
-				
+				cubies[i][j][k].draw(textures);
 			}
 		}
 	}
 }
 
 
-void Rubik::create() {
-	cubeVAO = cubies[0][0][0].createCubieVAO();
-	textureId = loadTexture(filename); // -> for texture
-
-	vector<std::string> faces
-	{
-		"../Assets/Textures/skybox/right.jpg",
-		"../Assets/Textures/skybox/left.jpg",
-		"../Assets/Textures/skybox/top.jpg",
-		"../Assets/Textures/skybox/bottom.jpg",
-		"../Assets/Textures/skybox/front.jpg",
-		"../Assets/Textures/skybox/back.jpg"
-	};
-	//textures = loadTextures(faces);
-	//textureId = loadCubemap(faces);
-}
-
-/*
-	All transfer functions have not been tested
-	should be executed once the animation is complete
-*/
 void Rubik::transferX(int k) {
 
 	Cubie temp;
@@ -276,7 +162,6 @@ void Rubik::transferY(int k) {
 	temp = cubies[1][k][0];
 	cubies[1][k][0] = temp2;
 	cubies[2][k][1] = temp;
-
 }
 
 void Rubik::transferZ(int k) {
@@ -305,6 +190,24 @@ void Rubik::transferZ(int k) {
 
 }
 
+
+void Rubik::create() {
+	cubeVAO = cubies[0][0][0].createCubieVAO();
+	//textureId = loadTexture(filename); // -> for texture
+
+	// If we do 4 different Rubik's cubies, all we have to do is pass the vector of faces
+	// as param of create()
+	vector<std::string> faces
+	{
+		"../Assets/Textures/skybox/right.jpg",
+		"../Assets/Textures/skybox/left.jpg",
+		"../Assets/Textures/skybox/top.jpg",
+		"../Assets/Textures/skybox/bottom.jpg",
+		"../Assets/Textures/skybox/front.jpg",
+		"../Assets/Textures/skybox/back.jpg"
+	};
+	textures = loadTextures(faces);
+}
 
 Rubik::~Rubik() {
 

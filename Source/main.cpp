@@ -183,6 +183,9 @@ int main(int argc, char* argv[])
 	//Load Texture and VAO for Models
 	rubik->create();
 
+	//----------------------------------------------------
+	// Set up Skybox
+	// TODO: if we have time, we can clean it up to its own class
 	float skyboxVertices[] = {
 		// positions          
 		-1.0f,  1.0f, -1.0f,
@@ -251,8 +254,9 @@ int main(int argc, char* argv[])
 
 	skyboxShader->use();
 	skyboxShader->setInt("skybox", 0);
+	//END of Skybox setup
+	//----------------------------------------------------
 
-	//double time = glfwGetTime();
 	// Entering Main Loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -297,13 +301,13 @@ int main(int argc, char* argv[])
 			//setUpCamera(camera_ptr, shaderPrograms[1]);
 		}
 
-		// draw skybox as last
+		// draw skybox
 		glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
 		skyboxShader->use();
 		view = glm::mat4(glm::mat3(view)); // remove translation from the view matrix
         skyboxShader->setMat4("view", view);
 		skyboxShader->setMat4("projection", projection);
-		// skybox cube
+
 		glBindVertexArray(skyboxVAO);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexture);
@@ -312,6 +316,9 @@ int main(int argc, char* argv[])
 		glDepthFunc(GL_LESS); // set depth function back to default
 
 		shaderProgram->use();
+
+
+
 		// End frame
 		glfwSwapBuffers(window);
 
@@ -383,9 +390,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		rubik = new Rubik();
 	}
 
-	//DOESN'T WORK BECAUSE IF YOU MOVE X, THEN THE POSITIONS ARE MESSED UP WHEN MOVING Y OR Z
-	//MAYBE MAKE AN ARRAY OR A LINKED LIST THAT'S UPDATED EVERYTIME YOU DO A MOVE
-	//AND WHEN YOU PRESS 1, INSTEAD OF GOING THROUGH A NESTED LOOP, IT GOES THROUGH THE ARRAY
 	//handle x
 	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
 	{
