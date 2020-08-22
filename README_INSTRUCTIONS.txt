@@ -5,7 +5,6 @@
 * GENERAL SETTINGS:
 
 	Music on/off:     M
-	Change music:     N
 	Lighting on/off:  B
 	Reset faces: 	  R
 	Shuffle cube:     S
@@ -49,3 +48,7 @@
 	
 	Zoom in:	  Left mouse button + mouse movement down OR mouse scroll up
 	Zoom out:	  Left mouse button + mouse movement up OR mouse scroll down
+	
+* SECRET:
+	Change music:     N
+	Secret jingle:	  Shift + 1
