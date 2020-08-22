@@ -321,14 +321,12 @@ int configureFreeType() {
 	glBindVertexArray(0);
 }
 
-void loadSkyboxTexture(vector<std::string> faces)
-{
+void loadSkyboxTexture(vector<std::string> faces) {
 	Object obj;
 	skyboxTexture = obj.loadCubemap(faces);
 }
 
 GLuint setUpSkybox() {
-
 	// TODO: if we have time, we can clean it up to its own class
 	float skyboxVertices[] = {
 		// positions          
@@ -408,8 +406,7 @@ void drawSkybox() {
 	shaderProgram->use();
 }
 
-void drawTimer()
-{
+void drawTimer() {
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
@@ -432,6 +429,16 @@ glm::mat4 setUpCamera(Camera* camera, Shader* shaderProgram) {
 	shaderProgram->setMat4("viewMatrix", viewMatrix);
 
 	return viewMatrix;
+}
+
+void playThemeSong() {
+	currentSong = const_cast<char*>(songs[currentMusic - 1].c_str());
+	music = engine->play2D(currentSong, true, false, false, irrklang::ESM_AUTO_DETECT, true);
+}
+
+void changeSongs(int trackID) {
+	engine->removeSoundSource(currentSong);
+	currentMusic = trackID;
 }
 
 /*
@@ -489,8 +496,7 @@ int main(int argc, char* argv[])
 
 	// Play some sound stream, looped
 	// Music is not null if parameters 'track', 'startPaused' or 'enableSoundEffects' have been set to true.
-	currentSong = const_cast<char*>(songs[currentMusic-1].c_str());
-	music = engine->play2D(currentSong, true, false, false, irrklang::ESM_AUTO_DETECT, true);
+	playThemeSong();
 	music->setVolume(0.3f);
 
 	// Setup FreeType
@@ -606,31 +612,23 @@ void resetRubik()
 
 	if (currentCube == 1) {
 		rubik->create(disneyFaces);
-		engine->removeSoundSource(currentSong);
-		currentMusic = 1;
-		currentSong = const_cast<char*>(songs[currentMusic-1].c_str());
-		music = engine->play2D(currentSong, true, false, false, irrklang::ESM_AUTO_DETECT, true);
+		changeSongs(1);
+		playThemeSong();
 	}
 	else if (currentCube == 2) {
 		rubik->create(finalfantasyFaces);
-		engine->removeSoundSource(currentSong);
-		currentMusic = 2;
-		currentSong = const_cast<char*>(songs[currentMusic-1].c_str());
-		music = engine->play2D(currentSong, true, false, false, irrklang::ESM_AUTO_DETECT, true);
+		changeSongs(2);
+		playThemeSong();
 	}
 	else if (currentCube == 3) {
 		rubik->create(pokemonFaces);
-		engine->removeSoundSource(currentSong);
-		currentMusic = 3;
-		currentSong = const_cast<char*>(songs[currentMusic-1].c_str());
-		music = engine->play2D(currentSong, true, false, false, irrklang::ESM_AUTO_DETECT, true);
+		changeSongs(3);
+		playThemeSong();
 	}
 	else if (currentCube == 4) {
 		rubik->create(zeldaFaces);
-		engine->removeSoundSource(currentSong);
-		currentMusic = 4;
-		currentSong = const_cast<char*>(songs[currentMusic-1].c_str());
-		music = engine->play2D(currentSong, true, false, false, irrklang::ESM_AUTO_DETECT, true);
+		changeSongs(4);
+		playThemeSong();
 	}
 
 	timeSinceReset = glfwGetTime();
@@ -654,8 +652,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		}
 		else {
 			engine->removeSoundSource(currentSong);
-			currentSong = const_cast<char*>(songs[currentMusic-1].c_str());
-			music = engine->play2D(currentSong, true, false, false, irrklang::ESM_AUTO_DETECT, true);
+			playThemeSong();
 
 			//handle skybox
 			loadSkyboxTexture(skyboxFaces);
