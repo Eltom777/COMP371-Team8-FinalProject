@@ -80,6 +80,12 @@
     <None Include="debug_vertex.glsl">
       <Filter>Shaders\Programs</Filter>
     </None>
+    <None Include="..\Assets\Shaders\text.fs">
+      <Filter>Shaders\Programs</Filter>
+    </None>
+    <None Include="..\Assets\Shaders\text.vs">
+      <Filter>Shaders\Programs</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\Assets\Textures\BillboardTest.bmp">

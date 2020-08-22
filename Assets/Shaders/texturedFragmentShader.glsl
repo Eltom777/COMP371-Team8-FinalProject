@@ -35,7 +35,7 @@ float shadow_scalar() {
     // get depth of current fragment from light's perspective
     float current_depth = ndc.z;
     // check whether current frag pos is in shadow
-    float bias = -0.35f;  // bias applied in depth map: see shadow_vertex.glsl
+    float bias = -0.3f;  // bias applied in depth map: see shadow_vertex.glsl
     return ((current_depth - bias) > closest_depth) ? 1.0 : 0.0;
 }
 
@@ -122,8 +122,8 @@ void main()
 	vec3 reflectDir = reflect(-lightDir, norm);
     vec3 halfwayDir = normalize(lightDir + viewDir);
 
-	//float spec = pow(max(dot(viewDir, reflectDir), 0.0), materialShininess);
-    float spec = pow(max(dot(norm, halfwayDir), 0.0), materialShininess);
+	float spec = pow(max(dot(viewDir, reflectDir), 0.0), materialShininess);
+    //float spec = pow(max(dot(norm, halfwayDir), 0.0), materialShininess);
     
     // Technique in the lab to render lighting and shadow
 	//vec3 specular = shadowScalar * specularStrength * (materialSpecular * spec * lightColor);

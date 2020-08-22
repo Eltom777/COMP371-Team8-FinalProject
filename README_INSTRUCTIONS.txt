@@ -2,33 +2,39 @@
 	KEY BINDS
 -------------------------
 
-* CHOOSE A MODEL (1-5) TO APPLY TRANSFORMATIONS / RENDERING MODE:
+* GENERAL SETTINGS:
 
-	Top left:     1
-	Top right:    2
-	Bottom left:  3
-	Bottom right: 4
-	Middle:       5
+	Music on/off:     M
+	Lighting on/off:  B
+	Reset faces: 	  R
+	Shuffle cube:     S
 
-* MODEL TRANSFORMATIONS:
+* CUBE THEMES:
+
+	Disney:	     Z
+	FFXIV:	     X
+	Pokemon:     C
+	Zelda:	     V
+
+* CUBE TRANSFORMATIONS:
 	
-	Shift left:   A
-	Shift right:  D
-	Shift up:     W
-	Shift down:   S
-
-	Scale up:     U
-	Scale down:   J
-
-	Rotate right: Minus (-)
-	Rotate left:  Equal (=)
+	Rotate column 1-1:   	1
+	Rotate column 2-1:  	2
+	Rotate column 3-1:     	3
+	
+	Rotate row 1:   	4
+	Rotate row 2		5
+	Rotate row 3:		6
+	
+	Rotate column 1-2:   	7
+	Rotate column 2-2:  	8
+	Rotate column 3-2:     	9
 
 * RENDERING MODE:
 
 	Points:       P
 	Lines:        L
 	Triangles:    T
-	Textures:     X
 
 * CAMERA:
 	
@@ -43,3 +49,6 @@
 	Zoom in:	  Left mouse button + mouse movement down OR mouse scroll up
 	Zoom out:	  Left mouse button + mouse movement up OR mouse scroll down
 	
+* SECRET:
+	Change music:     N
+	Secret jingle:	  Shift + 1
