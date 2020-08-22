@@ -618,6 +618,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			engine->removeSoundSource(currentSong);
 			currentSong = const_cast<char*>(songs[4].c_str());
 			music = engine->play2D(currentSong, true, false, false, irrklang::ESM_AUTO_DETECT, true);
+			easterEggSong = true;
 		}
 		else {
 			engine->removeSoundSource(currentSong);
