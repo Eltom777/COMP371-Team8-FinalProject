@@ -66,6 +66,7 @@ int shuffleCount = 0;
 // Forward declaration of camera and shader program
 Camera* camera_ptr;
 Shader* textShader;
+Shader* skyboxShader;
 Shader* shaderProgram;
 Shader* shadowShader;
 Shader* debugShader;
@@ -81,7 +82,7 @@ const unsigned int DEPTH_MAP_TEXTURE_SIZE = 1024;
 // Shadow Debug
 void renderQuad();
 
-// LightSwitch
+// Light switch
 bool isLightOn = true;
 bool* isLightOn_ptr = &isLightOn;
 
@@ -90,7 +91,6 @@ void renderGrid(Shader* shaderProgram, Grid objGrid) {
 	// Draw grid
 	objGrid.drawGrid(shaderProgram, false, true); // 3 vertices, starting at index 0
 }
-Shader* skyboxShader;
 
 // Forward declaration of camera and projection matrices
 glm::mat4 projection;
@@ -245,7 +245,7 @@ void setUpProjectionText(Shader* textShader) {
 }
 
 /*
-Method for changing the render mode of all the models.
+Method for changing the render mode of all the models
 */
 void renderMode(GLFWwindow* window) {
 	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
@@ -513,8 +513,6 @@ int main(int argc, char* argv[])
 	// Set up for shadows
 	setUpShadows(&depth_map_fbo, &depth_map_texture);
 
-
-
 	// Create Camera Object
 	camera_ptr = new Camera(window);
 
@@ -563,8 +561,6 @@ int main(int argc, char* argv[])
 		mat4 lightProjMatrix = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, lightNearPlane, lightFarPlane);
 
 		vec3 lightPos = vec3(0.001f, 1.75f, -1.5f);
-
-
 
 		vec3 lightFocus(0.0f, 0.0f, 0.0f);  // the point in 3D space the light "looks" at
 		mat4 lightViewMatrix = lookAt(lightPos, lightFocus, vec3(0.0f, 1.0f, 0.0f));
@@ -621,7 +617,6 @@ int main(int argc, char* argv[])
 		glBindFramebuffer(GL_FRAMEBUFFER, depth_map_fbo);
 
 		glClear(GL_DEPTH_BUFFER_BIT);
-
 
 		renderShadowGrid(shadowShader, objGrid);
 
