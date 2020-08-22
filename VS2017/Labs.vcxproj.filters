@@ -62,10 +62,22 @@
     <None Include="..\Assets\Shaders\Texture.vertexshader">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="..\Assets\Shaders\texturedFragmentShader.fragmentshader">
+    <None Include="..\Assets\Shaders\texturedFragmentShader.glsl">
       <Filter>Shaders\Programs</Filter>
     </None>
-    <None Include="..\Assets\Shaders\texturedVertexShader.vertexshader">
+    <None Include="..\Assets\Shaders\texturedVertexShader.glsl">
+      <Filter>Shaders\Programs</Filter>
+    </None>
+    <None Include="shadow_vertex.glsl">
+      <Filter>Shaders\Programs</Filter>
+    </None>
+    <None Include="shadow_fragment.glsl">
+      <Filter>Shaders\Programs</Filter>
+    </None>
+    <None Include="debug_fragment.glsl">
+      <Filter>Shaders\Programs</Filter>
+    </None>
+    <None Include="debug_vertex.glsl">
       <Filter>Shaders\Programs</Filter>
     </None>
     <None Include="..\Assets\Shaders\text.fs">
@@ -102,6 +114,9 @@
     <ClCompile Include="Objects\Rubik.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
+    <ClCompile Include="Objects\Grid.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\OBJloader.h">
@@ -126,6 +141,12 @@
       <Filter>Objects</Filter>
     </ClInclude>
     <ClInclude Include="Objects\Rubik.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\drawtext.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Grid.h">
       <Filter>Objects</Filter>
     </ClInclude>
   </ItemGroup>

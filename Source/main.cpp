@@ -31,6 +31,7 @@
 
 #include <Camera.h>
 #include <Rubik.h>
+#include <Grid.h>
 
 #include <../Source/stb_image.h>
 
@@ -67,17 +68,38 @@ Camera* camera_ptr;
 Shader* textShader;
 Shader* shaderProgram;
 Shader* shadowShader;
+Shader* debugShader;
+
+// Shadows
+void setUpShadows(GLuint* depth_map_fbo, GLuint* depth_map_texture);
+
+// Shadows fbo and depth map
+GLuint depth_map_fbo;
+GLuint depth_map_texture;
+const unsigned int DEPTH_MAP_TEXTURE_SIZE = 1024;
+
+// Shadow Debug
+void renderQuad();
+
+// LightSwitch
+bool isLightOn = true;
+bool* isLightOn_ptr = &isLightOn;
+
+// Grid
+void renderGrid(Shader* shaderProgram, Grid objGrid) {
+	// Draw grid
+	objGrid.drawGrid(shaderProgram, false, true); // 3 vertices, starting at index 0
+}
 Shader* skyboxShader;
 
 // Forward declaration of camera and projection matrices
 glm::mat4 projection;
 glm::mat4 view;
 
-// Lighting
-glm::vec3 lightSourcePosition(0.0f, 3.0f, -1.0f);
-glm::vec3 ambient(0.3f);
-glm::vec3 diffuse(1.0f);
-glm::vec3 specular(1.0f);
+void renderShadowGrid(Shader* shaderShadow, Grid objGrid) {
+	// Draw grid
+	objGrid.drawGridShadow(shaderShadow);
+}
 
 // Random location range
 const float MIN_RAND = -0.5f, MAX_RAND = 0.5f;
@@ -119,6 +141,9 @@ void displayTime(Shader* textShader);
 // Rubik's Cube
 Rubik* rubik = new Rubik();
 bool solved = false;
+
+// Light switching function
+void switchSpotLight();
 
 // Rubik's textures
 vector<std::string> pokemonFaces
@@ -481,13 +506,28 @@ int main(int argc, char* argv[])
 
 	// Compile and link shaders here ...
 	textShader = new Shader("../Assets/Shaders/text.vs", "../Assets/Shaders/text.fs");
-	shaderProgram = new Shader("../Assets/Shaders/texturedVertexShader.vertexshader", "../Assets/Shaders/texturedFragmentShader.fragmentshader");
+	shaderProgram = new Shader("../Assets/Shaders/texturedVertexShader.glsl", "../Assets/Shaders/texturedFragmentShader.glsl");
 	shadowShader = new Shader("../Assets/Shaders/shadow_vertex.glsl", "../Assets/Shaders/shadow_fragment.glsl");
 	skyboxShader = new Shader("../Assets/Shaders/skybox.vertexshader", "../Assets/Shaders/skybox.fragmentshader");
+
+	// Set up for shadows
+	setUpShadows(&depth_map_fbo, &depth_map_texture);
+
+
 
 	// Create Camera Object
 	camera_ptr = new Camera(window);
 
+	// Create the floor
+	Grid objGrid;
+	objGrid.setup();
+
+	// Set View and Projection matrices on both shaders
+	shaderProgram->use();
+	setUpProjection(shaderProgram, camera_ptr);
+
+	shaderProgram->setBool("isLightOn", *isLightOn_ptr);
+	shaderProgram->setInt("shadow_map", 9);
 	// Set orthogonal projection matrix for text
 	setUpProjectionText(textShader);
 
@@ -509,18 +549,36 @@ int main(int argc, char* argv[])
 	while (!glfwWindowShouldClose(window))
 	{
 		// Each frame, reset color of each pixel to glClearColor
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //DOUBLE CHECK
 
 		// Set up Perspective View
 		glfwGetWindowSize(window, &width, &height); // if window is resized, get new size to draw perspective view correctly
 		projection = setUpProjection(shaderProgram, camera_ptr);
 		//setUpProjection(shaderPrograms[1], camera_ptr);
 
+		// Shadows
+		float lightNearPlane = 0.1f;
+		float lightFarPlane = 7.5f;
+
+		mat4 lightProjMatrix = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, lightNearPlane, lightFarPlane);
+
+		vec3 lightPos = vec3(0.001f, 1.75f, -1.5f);
+
+
+
+		vec3 lightFocus(0.0f, 0.0f, 0.0f);  // the point in 3D space the light "looks" at
+		mat4 lightViewMatrix = lookAt(lightPos, lightFocus, vec3(0.0f, 1.0f, 0.0f));
+
+		mat4 proj_x_view = lightProjMatrix * lightViewMatrix;
+
+		shaderProgram->use();
+		shaderProgram->setMat4("light_proj_view_matrix", proj_x_view);
+
 		// Important: setting worldmatrix back to normal so other stuff doesn't get scaled down
 		shaderProgram->setMat4("worldMatrix", mat4(1.0f));
-		shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
+		shaderProgram->setVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f)); // redundant
 		shaderProgram->setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-		shaderProgram->setVec3("lightPos", lightSourcePosition);
+		shaderProgram->setVec3("lightPos", lightPos);
 		shaderProgram->setVec3("viewPos", camera_ptr->cameraPos);
 
 		// Model Render Mode
@@ -552,8 +610,42 @@ int main(int argc, char* argv[])
 		dt = time - last;
 		last = time;
 
+		glClear(GL_DEPTH_BUFFER_BIT);
+
+		// 1st pass -> Shadow render
+		shadowShader->use();
+		shadowShader->setMat4("proj_x_view", proj_x_view);
+
+		glViewport(0, 0, DEPTH_MAP_TEXTURE_SIZE, DEPTH_MAP_TEXTURE_SIZE);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, depth_map_fbo);
+
+		glClear(GL_DEPTH_BUFFER_BIT);
+
+
+		renderShadowGrid(shadowShader, objGrid);
+
+		rubik->drawShadow(shadowShader);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		// 2nd pass -> Regular render
+		int width, height;
+		glfwGetFramebufferSize(window, &width, &height);
+		glViewport(0, 0, width, height);
+		/*glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);*/
+
+		shaderProgram->use();
+
+		glActiveTexture(GL_TEXTURE9);
+		glBindTexture(GL_TEXTURE_2D, depth_map_texture);
+		
+		// Draw floor
+		renderGrid(shaderProgram, objGrid);
+
 		// Draw Rubik's Cube models
 		rubik->draw(shaderProgram, false);
+		glBindVertexArray(0);
 
 		// End frame
 		glfwSwapBuffers(window);
@@ -584,6 +676,93 @@ int main(int argc, char* argv[])
 
 	return 0;
 }
+
+
+void setUpShadows(GLuint* depth_map_fbo, GLuint* depth_map_texture) {
+	// Set up for shadows
+
+	glGenFramebuffers(1, depth_map_fbo);
+
+	// Variable storing index to texture used for shadow mapping
+	// Get the texture
+	glGenTextures(1, depth_map_texture);
+	// Bind the texture so the next glTex calls affect it
+	glBindTexture(GL_TEXTURE_2D, *depth_map_texture);
+	// Create the texture and specify it's attributes, including widthn height,
+	// components (only depth is stored, no color information)
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, DEPTH_MAP_TEXTURE_SIZE,
+		DEPTH_MAP_TEXTURE_SIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	// Set texture sampler parameters.
+	// The two calls below tell the texture sampler inside the shader how to
+	// upsample and downsample the texture. Here we choose the nearest filtering
+	// option, which means we just use the value of the closest pixel to the
+	// chosen image coordinate.
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	// The two calls below tell the texture sampler inside the shader how it
+	// should deal with texture coordinates outside of the [0, 1] range. Here we
+	// decide to just tile the image.
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	// Variable storing index to framebuffer used for shadow mapping
+	// Get the framebuffer
+	// Bind the framebuffer so the next glFramebuffer calls affect it
+	glBindFramebuffer(GL_FRAMEBUFFER, *depth_map_fbo);
+	// Attach the depth map texture to the depth map framebuffer
+	// glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
+	// depth_map_texture, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D,
+		*depth_map_texture, 0);
+	glDrawBuffer(GL_NONE);  // disable rendering colors, only write depth values
+	glReadBuffer(GL_NONE);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// End of set up for shadows
+}
+
+// Activate or deactive the spotlight
+void switchSpotLight() {
+	if (*isLightOn_ptr) {
+		*isLightOn_ptr = false;
+		shaderProgram->setBool("isLightOn", *isLightOn_ptr);
+	}
+	else {
+		*isLightOn_ptr = true;
+		shaderProgram->setBool("isLightOn", *isLightOn_ptr);
+	}
+}
+
+// To render the shadow depth map (For debug purposes)
+unsigned int quadVAO = 0;
+unsigned int quadVBO;
+void renderQuad()
+{
+	if (quadVAO == 0)
+	{
+		float quadVertices[] = {
+			// positions        // texture Coords
+			-5.0f,  5.0f, 0.0f, 0.0f, 1.0f,
+			-5.0f, -5.0f, 0.0f, 0.0f, 0.0f,
+			 5.0f,  5.0f, 0.0f, 1.0f, 1.0f,
+			 5.0f, -5.0f, 0.0f, 1.0f, 0.0f,
+		};
+		// setup plane VAO
+		glGenVertexArrays(1, &quadVAO);
+		glGenBuffers(1, &quadVBO);
+		glBindVertexArray(quadVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	}
+	glBindVertexArray(quadVAO);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glBindVertexArray(0);
+}
+
 
 /*
 Adaptors based on the interfaces at the top.
@@ -636,6 +815,8 @@ void resetRubik()
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	// Add Lighting
+
 	// Change backing track
 	if (key == GLFW_KEY_N && action == GLFW_PRESS) {
 		if (!easterEggSong) {
@@ -677,12 +858,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	// Turn lighting on and off
 	if (key == GLFW_KEY_B && action == GLFW_PRESS)
 	{
-		if (isLighting) {
-			isLighting = false;
-		}
-		else {
-			isLighting = true;
-		}
+		switchSpotLight();
 	}
 
 	// Reset button

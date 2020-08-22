@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 #include <Shader.h>
 #include "Object.h"
+#include <glm/gtc/matrix_transform.hpp> 
 
 using namespace glm;
 
@@ -13,7 +14,7 @@ static const float AXISLENGTH = static_cast<float>(10) / static_cast <float>(COL
 
 class Grid : public Object {
 
-	const char* filename = "../Assets/Textures/brick.jpg";
+	const char* filename = "../Assets/Textures/grass.jpg";
 
 	//Lighting properties
 	const vec3 ambient = vec3(0.05f, 0.15f, 0.05f);	 //	 vec3(0.05f, 0.15f, 0.05f)
@@ -44,6 +45,7 @@ public:
 	int getNumberOfColumns();
 	int createtextureGridVAO();
 	void drawGrid(Shader* shaderProgram, bool isTexture, bool isLighting);
+	void Grid::drawGridShadow(Shader* shadowShader);
 	void drawAxis(Shader* shaderProgram);
 private:
 	static const vec3 axis[];

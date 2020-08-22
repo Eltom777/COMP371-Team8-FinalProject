@@ -1,0 +1,18 @@
+#version 330 core
+layout(location = 0) in vec3 aPos;
+
+//uniform mat4 transform_in_light_space;
+uniform mat4 proj_x_view;
+uniform mat4 model;
+
+void main()
+{
+    mat4 scale_bias_matrix = mat4(vec4(0.5, 0.0, 0.0, 0.0),
+        vec4(0.0, 0.5, 0.0, 0.0),
+        vec4(0.0, 0.0, 0.5, 0.0),
+        vec4(0.5, 0.5, 0.5, 1.0));
+    //gl_Position = transform_in_light_space * model * vec4(aPos, 1.0);
+    gl_Position =  proj_x_view * model * vec4(aPos, 1.0);
+        //scale_bias_matrix * // bias the depth map coordinates
+        //transform_in_light_space * vec4(aPos, 1.0);
+}

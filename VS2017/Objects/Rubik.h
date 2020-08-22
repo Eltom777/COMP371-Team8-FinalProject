@@ -28,6 +28,7 @@ public:
 
 	mat4 getModelMatrix();
 	void draw(Shader* shaderProgram, const bool isTexture);
+	void drawShadow(Shader* shaderShadow);
 
 	void create(vector<std::string> faces);
 
