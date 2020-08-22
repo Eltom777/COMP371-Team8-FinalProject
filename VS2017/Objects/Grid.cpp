@@ -3,10 +3,10 @@
 
 const Grid::TexturedColoredVertex Grid::textureGrid[] = {
 	//Position												//color						//Texture			   //Normal
-	TexturedColoredVertex(glm::vec3(-5.0f, -3.0f, -5.0f),	glm::vec3(0.0f, 1.0f,0.0f),	glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)),
-	TexturedColoredVertex(glm::vec3(5.0f, -3.0f, -5.0f),		glm::vec3(0.0f, 1.0f,0.0f),	glm::vec2(0.0f, 2.0f), glm::vec3(0.0f, 1.0f, 0.0f)),
-	TexturedColoredVertex(glm::vec3(5.0f, -3.0f, 5.0f),		glm::vec3(0.0f, 1.0f,0.0f),	glm::vec2(2.0f, 2.0f), glm::vec3(0.0f, 1.0f, 0.0f)),
-	TexturedColoredVertex(glm::vec3(-5.0f, -3.0f, 5.0f),		glm::vec3(0.0f, 1.0f,0.0f),	glm::vec2(2.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)),
+	TexturedColoredVertex(glm::vec3(-50.0f, -3.0f, -50.0f),	glm::vec3(0.0f, 1.0f,0.0f),	glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)),
+	TexturedColoredVertex(glm::vec3(50.0f, -3.0f, -50.0f),		glm::vec3(0.0f, 1.0f,0.0f),	glm::vec2(0.0f, 2.0f), glm::vec3(0.0f, 1.0f, 0.0f)),
+	TexturedColoredVertex(glm::vec3(50.0f, -3.0f, 50.0f),		glm::vec3(0.0f, 1.0f,0.0f),	glm::vec2(2.0f, 2.0f), glm::vec3(0.0f, 1.0f, 0.0f)),
+	TexturedColoredVertex(glm::vec3(-50.0f, -3.0f, 50.0f),		glm::vec3(0.0f, 1.0f,0.0f),	glm::vec2(2.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)),
 };
 
 const int Grid::indices[]{
@@ -205,17 +205,13 @@ int Grid::createAxisVAO() {
 
 // Render the depth map
 
-void Grid::drawGridShadow(Shader* shadowShader, GLuint* depth_map_fbo) {
+void Grid::drawGridShadow(Shader* shadowShader) {
 	shadowShader->use();
-
+	shadowShader->setMat4("model", this->modelMatrix);
 
 	glBindVertexArray(textureGridVAO);
 
-	shadowShader->setMat4("model", this->modelMatrix);
-
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-
-	//glBindVertexArray(0);
 }
 
 void Grid::drawGrid(Shader* shaderProgram, bool isTexture, bool isLighting) {

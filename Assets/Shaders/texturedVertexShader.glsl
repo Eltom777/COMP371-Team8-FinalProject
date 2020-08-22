@@ -7,8 +7,8 @@ layout (location = 3) in vec3 aNormal;
 uniform vec3 lightPos;
         
 uniform mat4 worldMatrix;
-uniform mat4 viewMatrix = mat4(1.0);  // default value for view matrix (identity)
-uniform mat4 projectionMatrix = mat4(1.0);
+uniform mat4 viewMatrix;  // default value for view matrix (identity)
+uniform mat4 projectionMatrix;
 uniform mat4 light_proj_view_matrix;
         
 out vec3 FragPos;

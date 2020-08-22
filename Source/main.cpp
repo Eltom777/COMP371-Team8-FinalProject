@@ -52,14 +52,20 @@ Shader* shaderProgram;
 Shader* shadowShader;
 Shader* debugShader;
 
-// Lighting
-glm::vec3 lightSourcePosition(0.0f, 3.0f, -1.0f);
-glm::vec3 ambient(0.3f);
-glm::vec3 diffuse(1.0f);
-glm::vec3 specular(1.0f);
+// Shadows
+void setUpShadows(GLuint* depth_map_fbo, GLuint* depth_map_texture);
+
+// Shadows fbo and depth map
+GLuint depth_map_fbo;
+GLuint depth_map_texture;
+const unsigned int DEPTH_MAP_TEXTURE_SIZE = 1024;
 
 // Shadow Debug
 void renderQuad();
+
+// LightSwitch
+bool isLightOn = true;
+bool* isLightOn_ptr = &isLightOn;
 
 // Grid
 void renderGrid(Shader* shaderProgram, Grid objGrid) {
@@ -67,9 +73,9 @@ void renderGrid(Shader* shaderProgram, Grid objGrid) {
 	objGrid.drawGrid(shaderProgram, false, true); // 3 vertices, starting at index 0
 }
 
-void renderShadowGrid(Shader* shaderShadow, Grid objGrid, GLuint* depth_map_fbo) {
+void renderShadowGrid(Shader* shaderShadow, Grid objGrid) {
 	// Draw grid
-	objGrid.drawGridShadow(shaderShadow, depth_map_fbo);
+	objGrid.drawGridShadow(shaderShadow);
 }
 
 // Random location range
@@ -87,6 +93,9 @@ void operation();
 
 //Rubik's Cube
 Rubik* rubik = new Rubik();
+
+// Light switching function
+void switchSpotLight(GLFWwindow* window);
 
 
 void initialize() {
@@ -177,7 +186,6 @@ int main(int argc, char* argv[])
 
 	// Black background
 	glEnable(GL_DEPTH_TEST);
-
 	
 
 	// Compile and link shaders here ...
@@ -186,50 +194,7 @@ int main(int argc, char* argv[])
 	debugShader = new Shader("../Assets/Shaders/debug_vertex.glsl", "../Assets/Shaders/debug_fragment.glsl");
 
 	// Set up for shadows
-	const unsigned int DEPTH_MAP_TEXTURE_SIZE = 1024;
-
-	GLuint depth_map_fbo;  // fbo: framebuffer object
-	glGenFramebuffers(1, &depth_map_fbo);
-
-
-
-	// Variable storing index to texture used for shadow mapping
-	GLuint depth_map_texture;
-	// Get the texture
-	glGenTextures(1, &depth_map_texture);
-	// Bind the texture so the next glTex calls affect it
-	glBindTexture(GL_TEXTURE_2D, depth_map_texture);
-	// Create the texture and specify it's attributes, including widthn height,
-	// components (only depth is stored, no color information)
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, DEPTH_MAP_TEXTURE_SIZE,
-		DEPTH_MAP_TEXTURE_SIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	// Set texture sampler parameters.
- // The two calls below tell the texture sampler inside the shader how to
- // upsample and downsample the texture. Here we choose the nearest filtering
- // option, which means we just use the value of the closest pixel to the
- // chosen image coordinate.
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	// The two calls below tell the texture sampler inside the shader how it
-	// should deal with texture coordinates outside of the [0, 1] range. Here we
-	// decide to just tile the image.
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-	// Variable storing index to framebuffer used for shadow mapping
-	// Get the framebuffer
-	// Bind the framebuffer so the next glFramebuffer calls affect it
-	glBindFramebuffer(GL_FRAMEBUFFER, depth_map_fbo);
-	// Attach the depth map texture to the depth map framebuffer
-	// glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
-	// depth_map_texture, 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D,
-		depth_map_texture, 0);
-	glDrawBuffer(GL_NONE);  // disable rendering colors, only write depth values
-	glReadBuffer(GL_NONE);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	// End of set up for shadows
+	setUpShadows(&depth_map_fbo, &depth_map_texture);
 
 
 	// Create Camera Object
@@ -243,21 +208,16 @@ int main(int argc, char* argv[])
 	shaderProgram->use();
 	setUpProjection(shaderProgram, camera_ptr);
 
+	shaderProgram->setBool("isLightOn", *isLightOn_ptr);
 	shaderProgram->setInt("shadow_map", 3);
 
 	//Load Texture and VAO for Models
 	rubik->create();
 
 	//double time = glfwGetTime();
-	// Entering Main Loop
-	// Enable z-buffer
-	//glEnable(GL_DEPTH_TEST);
-	//glEnable(GL_CULL_FACE);
 
 	while (!glfwWindowShouldClose(window))
 	{
-		
-
 		// Set up Perspective View
 		glfwGetWindowSize(window, &width, &height); // if window is resized, get new size to draw perspective view correctly
 		shaderProgram->use();
@@ -269,35 +229,26 @@ int main(int argc, char* argv[])
 		last = time;
 
 		// Shadows
-		float lightNearPlane = 1.0f;
+		float lightNearPlane = 0.1f;
 		float lightFarPlane = 7.5f;
 
 		mat4 lightProjMatrix = /*frustum(-1.0f, 1.0f, -1.0f, 1.0f, lightNearPlane, lightFarPlane);*/
-			//perspective(1.0f, (float)DEPTH_MAP_TEXTURE_SIZE / (float)DEPTH_MAP_TEXTURE_SIZE, lightNearPlane, lightFarPlane);
+			//perspective(45.0f, (float)DEPTH_MAP_TEXTURE_SIZE / (float)DEPTH_MAP_TEXTURE_SIZE, lightNearPlane, lightFarPlane);
 			glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, lightNearPlane, lightFarPlane);
 
-
-		//vec3 lightPos = camera_ptr->cameraPos;
-		//vec3 lightPos = vec3(0.5f, 3.0f, 0.5);
-		vec3 lightPos = vec3(0.01f, 4.0f, 2.01f);
+		vec3 lightPos = vec3(0.001f, 1.75f, 1.5f);
 
 
 
 		vec3 lightFocus(0.0f, 0.0f, 0.0f);  // the point in 3D space the light "looks" at
-		vec3 lightDirection = normalize(lightFocus - lightPos);
 		mat4 lightViewMatrix = lookAt(lightPos, lightFocus, vec3(0.0f, 1.0f, 0.0f));
 
 		mat4 proj_x_view = lightProjMatrix * lightViewMatrix;
 
-		// I suspect that the lightProjMatrix might be problematic
-		std::cout << " light PROJ Matrix " << glm::to_string(lightProjMatrix) << std::endl;
-		std::cout << " light VIEW Matrix " << glm::to_string(lightViewMatrix) << std::endl;
-		
-
 		shaderProgram->use();
 		shaderProgram->setMat4("light_proj_view_matrix", proj_x_view);
 
-		std::cout << " LIGHT PROJ XXX VIEW MATRIX " << glm::to_string(proj_x_view) << std::endl;
+		
 		
 
 		// Important: setting worldmatrix back to normal so other stuff doesn't get scaled down
@@ -306,10 +257,6 @@ int main(int argc, char* argv[])
 		shaderProgram->setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
 		shaderProgram->setVec3("lightPos", lightPos);
 		shaderProgram->setVec3("viewPos", camera_ptr->cameraPos);
-
-		// value for shadowShader
-		shadowShader->use();
-		shadowShader->setMat4("proj_x_view", proj_x_view);
 
 		// Model Render Mode
 		renderMode(window);
@@ -326,11 +273,13 @@ int main(int argc, char* argv[])
 			setUpCamera(camera_ptr, shaderProgram);
 		}
 
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// 1st pass -> Shadow render
 		shadowShader->use();
+		shadowShader->setMat4("proj_x_view", proj_x_view);
+
 		glViewport(0, 0, DEPTH_MAP_TEXTURE_SIZE, DEPTH_MAP_TEXTURE_SIZE);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, depth_map_fbo);
@@ -338,9 +287,9 @@ int main(int argc, char* argv[])
 		glClear(GL_DEPTH_BUFFER_BIT);
 
 
-		renderShadowGrid(shadowShader, objGrid, &depth_map_fbo);
+		renderShadowGrid(shadowShader, objGrid);
 
-		rubik->drawShadow(shadowShader, &depth_map_fbo);
+		rubik->drawShadow(shadowShader);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -399,8 +348,62 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
+void setUpShadows(GLuint* depth_map_fbo, GLuint* depth_map_texture) {
+	// Set up for shadows
 
-// To render the shadow depth map
+	glGenFramebuffers(1, depth_map_fbo);
+
+	// Variable storing index to texture used for shadow mapping
+	// Get the texture
+	glGenTextures(1, depth_map_texture);
+	// Bind the texture so the next glTex calls affect it
+	glBindTexture(GL_TEXTURE_2D, *depth_map_texture);
+	// Create the texture and specify it's attributes, including widthn height,
+	// components (only depth is stored, no color information)
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, DEPTH_MAP_TEXTURE_SIZE,
+		DEPTH_MAP_TEXTURE_SIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	// Set texture sampler parameters.
+	// The two calls below tell the texture sampler inside the shader how to
+	// upsample and downsample the texture. Here we choose the nearest filtering
+	// option, which means we just use the value of the closest pixel to the
+	// chosen image coordinate.
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	// The two calls below tell the texture sampler inside the shader how it
+	// should deal with texture coordinates outside of the [0, 1] range. Here we
+	// decide to just tile the image.
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	// Variable storing index to framebuffer used for shadow mapping
+	// Get the framebuffer
+	// Bind the framebuffer so the next glFramebuffer calls affect it
+	glBindFramebuffer(GL_FRAMEBUFFER, *depth_map_fbo);
+	// Attach the depth map texture to the depth map framebuffer
+	// glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
+	// depth_map_texture, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D,
+		*depth_map_texture, 0);
+	glDrawBuffer(GL_NONE);  // disable rendering colors, only write depth values
+	glReadBuffer(GL_NONE);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// End of set up for shadows
+}
+
+// Activate or deactive the spotlight
+void switchSpotLight(GLFWwindow* window) {
+	if (*isLightOn_ptr) {
+		*isLightOn_ptr = false;
+		shaderProgram->setBool("isLightOn", *isLightOn_ptr);
+	}
+	else {
+		*isLightOn_ptr = true;
+		shaderProgram->setBool("isLightOn", *isLightOn_ptr);
+	}
+}
+
+// To render the shadow depth map (For debug purposes)
 unsigned int quadVAO = 0;
 unsigned int quadVBO;
 void renderQuad()
@@ -452,6 +455,11 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+	if (key == GLFW_KEY_S && action == GLFW_PRESS)
+	{
+		switchSpotLight(window);
+	}
+
 	if (key == GLFW_KEY_X && action == GLFW_PRESS)
 	{
 		if (isTexture) {

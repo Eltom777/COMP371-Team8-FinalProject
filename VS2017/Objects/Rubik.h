@@ -26,7 +26,7 @@ public:
 
 	mat4 getModelMatrix();
 	void draw(Shader* shaderProgram, const bool isTexture);
-	void drawShadow(Shader* shaderShadow, GLuint* depth_map_fbo);
+	void drawShadow(Shader* shaderShadow);
 	/*void updateModelMatrix();
 	void translateModel(mat4 t);
 	void translateModelTop(mat4 t);

@@ -184,8 +184,9 @@ void Rubik::draw(Shader* shaderProgram, const bool isTexture) {
 
 // To render the depth MAP
 
-void Rubik::drawShadow(Shader* shaderShadow, GLuint* depth_map_fbo) {
+void Rubik::drawShadow(Shader* shaderShadow) {
 	shaderShadow->use();
+
 
 	glBindVertexArray(cubeVAO);
 

@@ -14,6 +14,7 @@ in vec4 fragment_position_light_space;
 uniform sampler2D shadow_map;
 
 uniform bool isTexture;
+uniform bool isLightOn;
 uniform vec3 lightPos;
 uniform vec3 viewPos;
 uniform vec3 lightColor;
@@ -34,7 +35,7 @@ float shadow_scalar() {
     // get depth of current fragment from light's perspective
     float current_depth = ndc.z;
     // check whether current frag pos is in shadow
-    float bias = 0;  // bias applied in depth map: see shadow_vertex.glsl
+    float bias = -0.35f;  // bias applied in depth map: see shadow_vertex.glsl
     return ((current_depth - bias) > closest_depth) ? 1.0 : 0.0;
 }
 
@@ -50,13 +51,13 @@ void main()
     {
         case 0:
             materialAmbient = vec3(0.1f, 0.1f, 0.1f);
-            materialDiffuse = vec3(0.2f, 0.2f, 0.2f);
+            materialDiffuse = vec3(0.6f, 0.6f, 0.6f);
             materialSpecular = vec3(0.5f, 0.5f, 0.5f);
             materialShininess = 8.0f;
             break;
         case 1:
             materialAmbient = vec3(0.15f, 0.15f, 0.15f);
-            materialDiffuse = vec3(0.06f, 0.06f, 0.06f);
+            materialDiffuse = vec3(0.6f, 0.6f, 0.6f);
             materialSpecular = vec3(1.8f, 1.8f, 1.8f);
             materialShininess = 2.0f;
             break;
@@ -68,7 +69,7 @@ void main()
             break;
         default:
             materialAmbient = vec3(0.25f, 0.25f, 0.25f);
-            materialDiffuse = vec3(0.04f, 0.04f, 0.04f);
+            materialDiffuse = vec3(0.4f, 0.4f, 0.4f);
             materialSpecular = vec3(0.7f, 0.7f, 0.7f);
             materialShininess = 2.0f;;
             break;
@@ -115,7 +116,7 @@ void main()
 
 
     // specular
-	float specularStrength = 2.0;
+	float specularStrength = 3.0;
     vec3 viewDir = normalize(viewPos - FragPos); // World space
 	// vec3 viewDir = normalize(FragPos); // view-space
 	vec3 reflectDir = reflect(-lightDir, norm);
@@ -131,9 +132,17 @@ void main()
     // Technique in the lab to render lighting and shadow
     //vec4 tempResult = vec4((ambient + diffuse + specular), 1.0);
 
+    vec3 lighting;
+
+    if (isLightOn) {
+        lighting = (ambient + (1.0 - shadowScalar) * (diffuse + specular)) * thiscolor;
+    }
+    else {
+        lighting = ambient* thiscolor;
+    }
 
 
-    vec3 lighting = (ambient + (1.0 - shadowScalar) * (diffuse + specular)) * thiscolor;
+    //vec3 lighting = (ambient + (1.0 - shadowScalar) * (diffuse + specular)) * thiscolor;
     vec4 result = vec4(lighting, 1.0);
 
     // Technique in the lab to render lighting and shadow
