@@ -1,0 +1,66 @@
+-------------------------
+	ASSET CREDITS
+-------------------------
+
+* SONGS:
+
+	poohtheme (Winnie the Pooh Theme Song Piano Cover)
+		https://www.youtube.com/watch?v=cMAtKcRtuBA
+	ffxivnighttheme (FFXIV OST - The Churning Mists Night Theme)
+		https://www.youtube.com/watch?v=FrsES6HfiwI
+	pkmn theme (Pokemon Red, Blue, & Yellow OST - Opening Theme Piano Cover)
+		https://www.youtube.com/watch?v=PSvKpCfL8UQ
+	loztheme (The Legend of Zelda: Skyward Sword OST - Fi's Gratitude)
+		https://www.youtube.com/watch?v=QEbFLSfHqQ8
+	
+* HINT SOUNDS:
+
+	disneyhint (Disney Intro)
+		https://www.youtube.com/watch?v=kzYfRLMtP9c
+	ffxivhint (FFXIV ARR Party Sound Effects)
+		https://www.youtube.com/watch?v=EPhAS5sTXeY
+	pkmnhint (Pokemon Red/Blue/Yellow - Pokédex 1 - Sound Effect)
+		https://www.youtube.com/watch?v=YUSRyEmelrQ
+	lozhint ( The Legend of Zelda: The Wind Waker - Rupee Get - Sound Effect)
+		https://www.youtube.com/watch?v=Hi2FXbTLHhE
+
+* TEXTURES:
+
+	Disney:
+		ariel: http://images6.fanpop.com/image/photos/33200000/Ariel-Icons-ariel-33249976-200-200.jpg
+		cinderella: http://images6.fanpop.com/image/photos/35200000/Cinderella-disney-princess-35207179-200-200.jpg
+		poohreading: https://i.kym-cdn.com/photos/images/original/001/473/823/9f2.png
+		huh: https://64.media.tumblr.com/20731b16fd2ce0f6fc24063d4350edb4/tumblr_n1kbxhfOKS1sq4jpeo5_250.png
+		nala: http://images6.fanpop.com/image/photos/37500000/Nala-the-lion-king-37554544-200-200.jpg
+		stitch: https://64.media.tumblr.com/ac382daefbaff37bfbd4cf065bcccbe2/tumblr_nrrr06nIGP1sg4mvmo3_250.png
+		
+	FFXIV:
+		FFXIV1: https://static.wikia.nocookie.net/finalfantasy/images/0/00/FFXIV_Thaliak_Icon.png/revision/latest?cb=20170830100844
+		FFXIV2: https://static.wikia.nocookie.net/finalfantasy/images/8/83/FFXIV_Rhalgr_Icon.png/revision/latest?cb=20170830100843
+		FFXIV3: https://static.wikia.nocookie.net/finalfantasy/images/9/97/FFXIV_Oschon_Icon.png/revision/latest?cb=20170830100811
+		FFXIV4: https://static.wikia.nocookie.net/finalfantasy/images/6/63/FFXIV_Halone_Icon.png/revision/latest?cb=20170830100806
+		FFIXV5: https://static.wikia.nocookie.net/finalfantasy/images/e/e9/FFXIV_Azeyma_Icon.png/revision/latest?cb=20170830100804
+		FFIXV6: https://static.wikia.nocookie.net/finalfantasy/images/f/f0/FFXIV_Althyk_Icon.png/revision/latest?cb=20170830100804
+		
+	Pokemon:
+		rOWlet: https://i.imgflip.com/2vvi06.jpg
+		sha: https://pbs.twimg.com/profile_images/642806673728491521/qUsVi93N_400x400.jpg
+		pikchu: https://i.kym-cdn.com/entries/icons/original/000/027/475/Screen_Shot_2018-10-25_at_11.02.15_AM.png
+		ditto: https://img.game8.jp/3765488/d5da5c0d8cdd5efffeea5e625e5280ed.png/show
+		dry: https://64.media.tumblr.com/03aba486990053a591cdd2e5886da247/tumblr_oqmzxa6UdQ1wqyjbeo8_250.png
+		pokeball: https://vignette.wikia.nocookie.net/youtubepoop/images/4/4c/Pokeball.png/revision/latest?cb=20150418234807
+		
+	Zelda:
+		zelda: https://64.media.tumblr.com/bac3d941d82704974f88c6cdc6f8f2d4/tumblr_on09g1Abs11siygpno1_250.png
+		triforce: https://zeldawiki.info/w/images/e/e6/Triforce.png
+		hilda: https://vignette.wikia.nocookie.net/zelda/images/5/53/Princess_Hilda_Artwork.jpg/revision/latest?cb=20131115065609
+		link: http://images6.fanpop.com/image/photos/40300000/tumblr-inline-o8vkcf0VS31s3mkdf-250-legend-of-zelda-breath-of-the-wild-40377420-200-200.png
+		wink: https://www.deviantart.com/reymysterio79907/art/Twilight-Princess-Winking-Link-308868182
+		underwater: https://pbs.twimg.com/profile_images/848482351793426432/p0Lm8_S-_400x400.jpg
+
+	Skybox:
+		https://learnopengl.com/img/textures/skybox.zip
+
+	Secret Skybox:
+		excalibur: https://scontent.fymy1-2.fna.fbcdn.net/v/t31.0-8/s960x960/77998_152894851541874_990435856_o.jpg?_nc_cat=110&_nc_sid=85a577&_nc_ohc=IVRcY4F0PUYAX9jrMmZ&_nc_ht=scontent.fymy1-2.fna&_nc_tp=7&oh=113b0e4c11e00ed41f164adbd3856035&oe=5F653739
+		tch: https://www.clipartkey.com/view/mxTRbR_excalibur-soul-eater-reaction/
