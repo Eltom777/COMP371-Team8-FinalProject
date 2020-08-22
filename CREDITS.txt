@@ -4,25 +4,17 @@
 
 * SONGS:
 
-	poohtheme (Winnie the Pooh Theme Song Piano Cover)
-		https://www.youtube.com/watch?v=cMAtKcRtuBA
-	ffxivnighttheme (FFXIV OST - The Churning Mists Night Theme)
-		https://www.youtube.com/watch?v=FrsES6HfiwI
-	pkmn theme (Pokemon Red, Blue, & Yellow OST - Opening Theme Piano Cover)
-		https://www.youtube.com/watch?v=PSvKpCfL8UQ
-	loztheme (The Legend of Zelda: Skyward Sword OST - Fi's Gratitude)
-		https://www.youtube.com/watch?v=QEbFLSfHqQ8
+	poohtheme (Winnie the Pooh Theme Song Piano Cover): https://www.youtube.com/watch?v=cMAtKcRtuBA
+	ffxivnighttheme (FFXIV OST - The Churning Mists Night Theme): https://www.youtube.com/watch?v=FrsES6HfiwI
+	pkmn theme (Pokemon Red, Blue, & Yellow OST - Opening Theme Piano Cover): https://www.youtube.com/watch?v=PSvKpCfL8UQ
+	loztheme (The Legend of Zelda: Skyward Sword OST - Fi's Gratitude): https://www.youtube.com/watch?v=QEbFLSfHqQ8
 	
 * HINT SOUNDS:
 
-	disneyhint (Disney Intro)
-		https://www.youtube.com/watch?v=kzYfRLMtP9c
-	ffxivhint (FFXIV ARR Party Sound Effects)
-		https://www.youtube.com/watch?v=EPhAS5sTXeY
-	pkmnhint (Pokemon Red/Blue/Yellow - Pokédex 1 - Sound Effect)
-		https://www.youtube.com/watch?v=YUSRyEmelrQ
-	lozhint ( The Legend of Zelda: The Wind Waker - Rupee Get - Sound Effect)
-		https://www.youtube.com/watch?v=Hi2FXbTLHhE
+	disneyhint (Disney Intro): https://www.youtube.com/watch?v=kzYfRLMtP9c
+	ffxivhint (FFXIV ARR Party Sound Effects) https://www.youtube.com/watch?v=EPhAS5sTXeY
+	pkmnhint (Pokemon Red/Blue/Yellow - Pokédex 1 - Sound Effect): https://www.youtube.com/watch?v=YUSRyEmelrQ
+	lozhint (The Legend of Zelda: The Wind Waker - Rupee Get - Sound Effect): https://www.youtube.com/watch?v=Hi2FXbTLHhE
 
 * TEXTURES:
 

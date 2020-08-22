@@ -50,5 +50,6 @@
 	Zoom out:	  Left mouse button + mouse movement up OR mouse scroll down
 	
 * SECRET:
-	Change music:     N
-	Secret jingle:	  Shift + 1
+
+	Secret music and skybox:     N
+	Secret jingle:	  	     Shift + 1
