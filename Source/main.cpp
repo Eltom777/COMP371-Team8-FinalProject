@@ -549,7 +549,7 @@ int main(int argc, char* argv[])
 	while (!glfwWindowShouldClose(window))
 	{
 		// Each frame, reset color of each pixel to glClearColor
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //DOUBLE CHECK
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //DOUBLE CHECK
 
 		// Set up Perspective View
 		glfwGetWindowSize(window, &width, &height); // if window is resized, get new size to draw perspective view correctly
@@ -562,7 +562,7 @@ int main(int argc, char* argv[])
 
 		mat4 lightProjMatrix = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, lightNearPlane, lightFarPlane);
 
-		vec3 lightPos = vec3(0.001f, 1.75f, 1.5f);
+		vec3 lightPos = vec3(0.001f, 1.75f, -1.5f);
 
 
 
@@ -594,8 +594,7 @@ int main(int argc, char* argv[])
 		view = setUpCamera(camera_ptr, shaderProgram);
 
 		// Use shader
-		skyboxShader->use();
-		//shaderProgram->use();
+		shaderProgram->use();
 
 		// Draw Skybox
 		drawSkybox();
@@ -611,7 +610,7 @@ int main(int argc, char* argv[])
 		dt = time - last;
 		last = time;
 
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_DEPTH_BUFFER_BIT);
 
 		// 1st pass -> Shadow render
 		shadowShader->use();
@@ -634,7 +633,7 @@ int main(int argc, char* argv[])
 		int width, height;
 		glfwGetFramebufferSize(window, &width, &height);
 		glViewport(0, 0, width, height);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		/*glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);*/
 
 		shaderProgram->use();
 
