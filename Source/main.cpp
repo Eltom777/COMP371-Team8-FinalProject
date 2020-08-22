@@ -42,7 +42,8 @@ int height = 768;
 static int currentCube = 1;
 
 // Which music is currently playing
-static int currentMusic = 0; // 0 - disney, 1 - ffxiv, 2 - pokemon, 3 - loz, 4 - mii
+static int currentMusic = 1; // 1 - disney, 2 - ffxiv, 3 - pokemon, 4 - loz, 5 - mii
+bool easterEggSong = false;
 char* currentSong;
 static std::string songs[5] = { "../Assets/Sound/poohtheme.mp3", "../Assets/Sound/ffxivnighttheme.mp3", "../Assets/Sound/pkmntheme.mp3", "../Assets/Sound/loztheme.mp3", "../Assets/Sound/miichannel.mp3"};
 
@@ -613,10 +614,16 @@ void resetRubik()
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	// Change backing track
 	if (key == GLFW_KEY_N && action == GLFW_PRESS) {
-		engine->removeSoundSource(currentSong);
-		currentMusic = 5;
-		currentSong = const_cast<char*>(songs[currentMusic - 1].c_str());
-		music = engine->play2D(currentSong, true, false, false, irrklang::ESM_AUTO_DETECT, true);
+		if (!easterEggSong) {
+			engine->removeSoundSource(currentSong);
+			currentSong = const_cast<char*>(songs[4].c_str());
+			music = engine->play2D(currentSong, true, false, false, irrklang::ESM_AUTO_DETECT, true);
+		}
+		else {
+			engine->removeSoundSource(currentSong);
+			currentSong = const_cast<char*>(songs[currentMusic-1].c_str());
+			music = engine->play2D(currentSong, true, false, false, irrklang::ESM_AUTO_DETECT, true);
+		}
 	}
 
 	// Turn music on and off
