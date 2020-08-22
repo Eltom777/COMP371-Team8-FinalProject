@@ -42,7 +42,10 @@ int height = 768;
 static int currentCube = 1;
 
 // Which music is currently playing
-static int currentMusic = 1;
+static int currentMusic = 1; // 1 - disney, 2 - ffxiv, 3 - pokemon, 4 - loz, 5 - mii
+bool easterEggSong = false;
+char* currentSong;
+static std::string songs[5] = { "../Assets/Sound/poohtheme.mp3", "../Assets/Sound/ffxivnighttheme.mp3", "../Assets/Sound/pkmntheme.mp3", "../Assets/Sound/loztheme.mp3", "../Assets/Sound/miichannel.mp3"};
 
 // Settings for lighting and music
 bool isLighting = true;
@@ -446,7 +449,8 @@ int main(int argc, char* argv[])
 
 	// Play some sound stream, looped
 	// Music is not null if parameters 'track', 'startPaused' or 'enableSoundEffects' have been set to true.
-	music = engine->play2D("../Assets/Sound/BackingTrack.mp3", true, false, false, irrklang::ESM_AUTO_DETECT, true);
+	currentSong = const_cast<char*>(songs[currentMusic-1].c_str());
+	music = engine->play2D(currentSong, true, false, false, irrklang::ESM_AUTO_DETECT, true);
 	music->setVolume(0.3f);
 
 	// Setup FreeType
@@ -574,14 +578,34 @@ void resetRubik()
 	rubik->~Rubik();
 	rubik = new Rubik();
 
-	if (currentCube == 1)
+	if (currentCube == 1) {
 		rubik->create(disneyFaces);
-	else if (currentCube == 2)
+		engine->removeSoundSource(currentSong);
+		currentMusic = 1;
+		currentSong = const_cast<char*>(songs[currentMusic-1].c_str());
+		music = engine->play2D(currentSong, true, false, false, irrklang::ESM_AUTO_DETECT, true);
+	}
+	else if (currentCube == 2) {
 		rubik->create(finalfantasyFaces);
-	else if (currentCube == 3)
+		engine->removeSoundSource(currentSong);
+		currentMusic = 2;
+		currentSong = const_cast<char*>(songs[currentMusic-1].c_str());
+		music = engine->play2D(currentSong, true, false, false, irrklang::ESM_AUTO_DETECT, true);
+	}
+	else if (currentCube == 3) {
 		rubik->create(pokemonFaces);
-	else if (currentCube == 4)
+		engine->removeSoundSource(currentSong);
+		currentMusic = 3;
+		currentSong = const_cast<char*>(songs[currentMusic-1].c_str());
+		music = engine->play2D(currentSong, true, false, false, irrklang::ESM_AUTO_DETECT, true);
+	}
+	else if (currentCube == 4) {
 		rubik->create(zeldaFaces);
+		engine->removeSoundSource(currentSong);
+		currentMusic = 4;
+		currentSong = const_cast<char*>(songs[currentMusic-1].c_str());
+		music = engine->play2D(currentSong, true, false, false, irrklang::ESM_AUTO_DETECT, true);
+	}
 
 	timeSinceReset = glfwGetTime();
 	solved = false;
@@ -590,18 +614,17 @@ void resetRubik()
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 	// Change backing track
 	if (key == GLFW_KEY_N && action == GLFW_PRESS) {
-		if (currentMusic == 1)
-		{
-			currentMusic = 2;
-			engine->removeSoundSource("../Assets/Sound/BackingTrack.mp3");
-			music = engine->play2D("../Assets/Sound/Mii Channel Music.mp3", true, false, false, irrklang::ESM_AUTO_DETECT, true);
+		if (!easterEggSong) {
+			engine->removeSoundSource(currentSong);
+			currentSong = const_cast<char*>(songs[4].c_str());
+			music = engine->play2D(currentSong, true, false, false, irrklang::ESM_AUTO_DETECT, true);
+			easterEggSong = true;
 		}
-		else if (currentMusic == 2)
-		{
-			currentMusic = 1;
-			engine->removeSoundSource("../Assets/Sound/Mii Channel Music.mp3");
-			music = engine->play2D("../Assets/Sound/BackingTrack.mp3", true, false, false, irrklang::ESM_AUTO_DETECT, true);
-			
+		else {
+			engine->removeSoundSource(currentSong);
+			currentSong = const_cast<char*>(songs[currentMusic-1].c_str());
+			music = engine->play2D(currentSong, true, false, false, irrklang::ESM_AUTO_DETECT, true);
+			easterEggSong = false;
 		}
 	}
 
