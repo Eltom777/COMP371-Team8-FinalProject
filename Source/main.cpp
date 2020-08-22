@@ -121,7 +121,8 @@ unsigned int textVAO, textVBO;
 
 // Skybox properties
 GLuint skyboxTexture;
-unsigned int skyboxVAO, skyboxVBO;
+GLuint skyboxVAO;
+//GLuint skyboxVAO, skyboxVBO;
 
 // Function interfaces for camera response to mouse input
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -183,6 +184,27 @@ vector<std::string> finalfantasyFaces
 	"../Assets/Textures/FFXIV/FFXIV4.jpg",
 	"../Assets/Textures/FFXIV/FFXIV5.jpg",
 	"../Assets/Textures/FFXIV/FFXIV6.jpg"
+};
+
+//Skybox faces
+vector<std::string> skyboxFaces
+{
+	"../Assets/Textures/skybox/right.jpg",
+	"../Assets/Textures/skybox/left.jpg",
+	"../Assets/Textures/skybox/top.jpg",
+	"../Assets/Textures/skybox/bottom.jpg",
+	"../Assets/Textures/skybox/front.jpg",
+	"../Assets/Textures/skybox/back.jpg"
+};
+
+vector<std::string> easterEggFaces
+{
+	"../Assets/Textures/tch.jpg",
+	"../Assets/Textures/tch.jpg",
+	"../Assets/Textures/tch.jpg",
+	"../Assets/Textures/tch.jpg",
+	"../Assets/Textures/tch.jpg",
+	"../Assets/Textures/tch.jpg"
 };
 
 // Initialize sound Engine; start the sound engine with default parameters
@@ -324,7 +346,12 @@ int configureFreeType() {
 	glBindVertexArray(0);
 }
 
-void setUpSkybox() {
+void loadSkyboxTexture(vector<std::string> faces) {
+	Object obj;
+	skyboxTexture = obj.loadCubemap(faces);
+}
+
+GLuint setUpSkybox() {
 	// TODO: if we have time, we can clean it up to its own class
 	float skyboxVertices[] = {
 		// positions          
@@ -371,6 +398,7 @@ void setUpSkybox() {
 		1.0f, -1.0f,  1.0f
 	};
 
+	GLuint skyboxVAO, skyboxVBO;
 	glGenVertexArrays(1, &skyboxVAO);
 	glGenBuffers(1, &skyboxVBO);
 	glBindVertexArray(skyboxVAO);
@@ -379,23 +407,16 @@ void setUpSkybox() {
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
-	vector<std::string> faces
-	{
-		"../Assets/Textures/skybox/right.jpg",
-		"../Assets/Textures/skybox/left.jpg",
-		"../Assets/Textures/skybox/top.jpg",
-		"../Assets/Textures/skybox/bottom.jpg",
-		"../Assets/Textures/skybox/front.jpg",
-		"../Assets/Textures/skybox/back.jpg"
-	};
-	Object obj;
-	skyboxTexture = obj.loadCubemap(faces);
+	loadSkyboxTexture(skyboxFaces);
 
 	skyboxShader->use();
 	skyboxShader->setInt("skybox", 0);
+
+	return skyboxVAO;
 }
 
 void drawSkybox() {
+	glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
 	skyboxShader->use();
 	view = glm::mat4(glm::mat3(view)); // remove translation from the view matrix
 	skyboxShader->setMat4("view", view);
@@ -406,6 +427,23 @@ void drawSkybox() {
 	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexture);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
+	glDepthFunc(GL_LESS); // set depth function back to default
+	shaderProgram->use();
+}
+
+void drawTimer() {
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	if (!solved) {
+		timeElapsed = glfwGetTime(); // Update time if the puzzle has not yet been solved
+	}
+	displayTime(textShader);
+
+	// Disable after rendering text
+	glDisable(GL_CULL_FACE);
+	glDisable(GL_BLEND);
 }
 
 glm::mat4 setUpCamera(Camera* camera, Shader* shaderProgram) {
@@ -416,6 +454,16 @@ glm::mat4 setUpCamera(Camera* camera, Shader* shaderProgram) {
 	shaderProgram->setMat4("viewMatrix", viewMatrix);
 
 	return viewMatrix;
+}
+
+void playThemeSong() {
+	currentSong = const_cast<char*>(songs[currentMusic - 1].c_str());
+	music = engine->play2D(currentSong, true, false, false, irrklang::ESM_AUTO_DETECT, true);
+}
+
+void changeSongs(int trackID) {
+	engine->removeSoundSource(currentSong);
+	currentMusic = trackID;
 }
 
 /*
@@ -484,20 +532,18 @@ int main(int argc, char* argv[])
 	setUpProjectionText(textShader);
 
 	// Create Rubik's cube
-	// Different textures
 	rubik->create(disneyFaces);
 
 	// Play some sound stream, looped
 	// Music is not null if parameters 'track', 'startPaused' or 'enableSoundEffects' have been set to true.
-	currentSong = const_cast<char*>(songs[currentMusic-1].c_str());
-	music = engine->play2D(currentSong, true, false, false, irrklang::ESM_AUTO_DETECT, true);
+	playThemeSong();
 	music->setVolume(0.3f);
 
 	// Setup FreeType
 	configureFreeType();
 
 	// Setup skybox
-	setUpSkybox();
+	skyboxVAO = setUpSkybox();
 
 	// Entering Main Loop
 	while (!glfwWindowShouldClose(window))
@@ -552,24 +598,10 @@ int main(int argc, char* argv[])
 		//shaderProgram->use();
 
 		// Draw Skybox
-		glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
 		drawSkybox();
-		glDepthFunc(GL_LESS); // set depth function back to default
 
 		// Draw Timer
-		// Enable face culling and blending for text to appear
-		glDisable(GL_DEPTH_TEST);
-		glEnable(GL_CULL_FACE);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		if (!solved) {
-			timeElapsed = glfwGetTime(); // Update time if the puzzle has not yet been solved
-		}
-		displayTime(textShader);
-
-		// Disable after rendering text
-		glDisable(GL_CULL_FACE);
-		glDisable(GL_BLEND);
+		drawTimer();
 
 		// Enable z-buffer
 		glEnable(GL_DEPTH_TEST);
@@ -760,31 +792,23 @@ void resetRubik()
 
 	if (currentCube == 1) {
 		rubik->create(disneyFaces);
-		engine->removeSoundSource(currentSong);
-		currentMusic = 1;
-		currentSong = const_cast<char*>(songs[currentMusic-1].c_str());
-		music = engine->play2D(currentSong, true, false, false, irrklang::ESM_AUTO_DETECT, true);
+		changeSongs(1);
+		playThemeSong();
 	}
 	else if (currentCube == 2) {
 		rubik->create(finalfantasyFaces);
-		engine->removeSoundSource(currentSong);
-		currentMusic = 2;
-		currentSong = const_cast<char*>(songs[currentMusic-1].c_str());
-		music = engine->play2D(currentSong, true, false, false, irrklang::ESM_AUTO_DETECT, true);
+		changeSongs(2);
+		playThemeSong();
 	}
 	else if (currentCube == 3) {
 		rubik->create(pokemonFaces);
-		engine->removeSoundSource(currentSong);
-		currentMusic = 3;
-		currentSong = const_cast<char*>(songs[currentMusic-1].c_str());
-		music = engine->play2D(currentSong, true, false, false, irrklang::ESM_AUTO_DETECT, true);
+		changeSongs(3);
+		playThemeSong();
 	}
 	else if (currentCube == 4) {
 		rubik->create(zeldaFaces);
-		engine->removeSoundSource(currentSong);
-		currentMusic = 4;
-		currentSong = const_cast<char*>(songs[currentMusic-1].c_str());
-		music = engine->play2D(currentSong, true, false, false, irrklang::ESM_AUTO_DETECT, true);
+		changeSongs(4);
+		playThemeSong();
 	}
 
 	timeSinceReset = glfwGetTime();
@@ -797,15 +821,25 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	// Change backing track
 	if (key == GLFW_KEY_N && action == GLFW_PRESS) {
 		if (!easterEggSong) {
+			//handle music
 			engine->removeSoundSource(currentSong);
 			currentSong = const_cast<char*>(songs[4].c_str());
 			music = engine->play2D(currentSong, true, false, false, irrklang::ESM_AUTO_DETECT, true);
+
+			//handle skybox
+			loadSkyboxTexture(easterEggFaces);
+			drawSkybox();
+
 			easterEggSong = true;
 		}
 		else {
 			engine->removeSoundSource(currentSong);
-			currentSong = const_cast<char*>(songs[currentMusic-1].c_str());
-			music = engine->play2D(currentSong, true, false, false, irrklang::ESM_AUTO_DETECT, true);
+			playThemeSong();
+
+			//handle skybox
+			loadSkyboxTexture(skyboxFaces);
+			drawSkybox();
+
 			easterEggSong = false;
 		}
 	}
@@ -937,7 +971,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 	if (currentCube == 3 && glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 	{
-		engine->play2D("../Assets/Sound/pkmnsolve.wav", false);
+		engine->play2D("../Assets/Sound/pkmnhint.wav", false);
 	}
 
 	// Shuffle
